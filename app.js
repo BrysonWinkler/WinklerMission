@@ -2,7 +2,10 @@
 // WINKLER MISSION JOURNAL APP
 // =====================================
 
+
 console.log("Winkler Mission App Loaded");
+
+
 
 
 // JSONP LOADER
@@ -28,7 +31,10 @@ function loadJSONP(action, callbackName, callback){
 
 
 
-// LOAD MISSION
+
+
+
+// MISSION DATA
 
 function loadMission(){
 
@@ -36,6 +42,7 @@ function loadMission(){
         "mission",
         "missionCallback",
         function(data){
+
 
             document.getElementById("status").innerHTML = `
 
@@ -54,6 +61,7 @@ function loadMission(){
 
             `;
 
+
         }
     );
 
@@ -61,43 +69,85 @@ function loadMission(){
 
 
 
-// LOAD LETTERS
+
+
+
+
+// EMAILS
 
 function loadLetters(){
+
 
     loadJSONP(
         "letters",
         "lettersCallback",
         function(data){
 
-            console.log("Letters:", data);
+
+            let html="";
+
+
+            data.forEach(function(letter){
+
+
+                html += `
+
+                <div class="card">
+
+                <h3>
+                📖 ${letter.name}
+                </h3>
+
+
+                <a class="button"
+                href="${letter.url}"
+                target="_blank">
+
+                Read Letter
+
+                </a>
+
+
+                </div>
+
+
+                `;
+
+
+            });
+
+
+
+            document.getElementById("letters")
+            .innerHTML = html;
+
+
 
         }
     );
+
 
 }
 
 
 
-// LOAD PHOTOS
+
+
+
+
+// PHOTOS (later)
 
 function loadPhotos(){
 
-    loadJSONP(
-        "photos",
-        "photosCallback",
-        function(data){
-
-            console.log("Photos:", data);
-
-        }
-    );
+    console.log("Photos ready for next step");
 
 }
 
 
 
-// START APP
+
+
+
 
 window.onload=function(){
 
