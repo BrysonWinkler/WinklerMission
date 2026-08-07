@@ -1,0 +1,104 @@
+body {
+
+    margin:0;
+
+    font-family:Georgia, serif;
+
+    color:#3b2a1f;
+
+    background:#f6ead3;
+
+}
+
+
+.hero {
+
+    background:
+    linear-gradient(
+    135deg,
+    #c96b3b,
+    #355834
+    );
+
+    color:white;
+
+    padding:60px 20px;
+
+    text-align:center;
+
+}
+
+
+.hero h1 {
+
+    font-size:45px;
+
+}
+
+
+.container {
+
+    max-width:950px;
+
+    margin:auto;
+
+    padding:30px 20px;
+
+}
+
+
+.card {
+
+    background:#fffaf0;
+
+    border-radius:25px;
+
+    padding:30px;
+
+    margin-bottom:30px;
+
+    box-shadow:
+    0 12px 25px rgba(80,40,10,.15);
+
+    border:
+    1px solid #d8b98b;
+
+}
+
+
+.button {
+
+    display:inline-block;
+
+    background:#355834;
+
+    color:white;
+
+    padding:12px 22px;
+
+    border-radius:18px;
+
+    text-decoration:none;
+
+}
+
+
+.gallery {
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+
+}
+
+
+.gallery img {
+
+    width:100%;
+
+    border-radius:18px;
+
+}
