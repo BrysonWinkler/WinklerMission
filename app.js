@@ -5,20 +5,39 @@
 console.log("Winkler Mission App Loaded");
 
 
-// LOAD MISSION DATA
+// JSONP LOADER
 
-async function loadMission(){
+function loadJSONP(action, callbackName, callback){
 
-    try {
-
-        const response = await fetch(
-            API_URL + "?action=mission"
-        );
-
-        const data = await response.json();
+    window[callbackName] = callback;
 
 
-        document.getElementById("status").innerHTML = `
+    const script = document.createElement("script");
+
+    script.src =
+        API_URL +
+        "?action=" +
+        action +
+        "&callback=" +
+        callbackName;
+
+
+    document.body.appendChild(script);
+
+}
+
+
+
+// LOAD MISSION
+
+function loadMission(){
+
+    loadJSONP(
+        "mission",
+        "missionCallback",
+        function(data){
+
+            document.getElementById("status").innerHTML = `
 
             🏠 Home MTC:
             ${data.mtcDate}
@@ -33,81 +52,54 @@ async function loadMission(){
             🌵 Monterrey Mission:
             ${data.missionStart}
 
-        `;
+            `;
 
-
-    } catch(error){
-
-        console.error("Mission loading failed:", error);
-
-        document.getElementById("status").innerHTML =
-        "Unable to load mission data.";
-
-    }
+        }
+    );
 
 }
-
-
 
 
 
 // LOAD LETTERS
 
-async function loadLetters(){
+function loadLetters(){
 
-    try {
+    loadJSONP(
+        "letters",
+        "lettersCallback",
+        function(data){
 
-        const response = await fetch(
-            API_URL + "?action=letters"
-        );
+            console.log("Letters:", data);
 
-        const data = await response.json();
-
-        console.log("Letters:", data);
-
-
-    } catch(error){
-
-        console.error("Letters loading failed:", error);
-
-    }
+        }
+    );
 
 }
-
-
 
 
 
 // LOAD PHOTOS
 
-async function loadPhotos(){
+function loadPhotos(){
 
-    try {
+    loadJSONP(
+        "photos",
+        "photosCallback",
+        function(data){
 
-        const response = await fetch(
-            API_URL + "?action=photos"
-        );
+            console.log("Photos:", data);
 
-        const data = await response.json();
-
-        console.log("Photos:", data);
-
-
-    } catch(error){
-
-        console.error("Photos loading failed:", error);
-
-    }
+        }
+    );
 
 }
 
 
 
-
-
 // START APP
 
-window.onload = function(){
+window.onload=function(){
 
     loadMission();
 
