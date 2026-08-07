@@ -1,5 +1,6 @@
 // =====================================
-// WINKLER MISSION ARCHIVE APP
+// WINKLER MISSION ARCHIVE
+// APP.JS
 // =====================================
 
 
@@ -15,54 +16,7 @@ let photos = [];
 
 
 // =====================================
-// PAGE NAVIGATION
-// =====================================
-
-
-function showPage(page){
-
-
-document.getElementById("homePage").style.display="none";
-
-document.getElementById("lettersPage").style.display="none";
-
-document.getElementById("photosPage").style.display="none";
-
-document.getElementById("mapPage").style.display="none";
-
-
-
-document.getElementById(page+"Page").style.display="block";
-
-
-
-if(page=="map"){
-
-loadMap();
-
-}
-
-
-
-window.scrollTo({
-
-top:0,
-
-behavior:"smooth"
-
-});
-
-
-}
-
-
-
-
-
-
-
-// =====================================
-// JSONP CONNECTION TO APPS SCRIPT
+// JSONP CONNECTION
 // =====================================
 
 
@@ -117,147 +71,42 @@ document.body.appendChild(script);
 
 
 // =====================================
-// MISSION DATA
+// PAGE NAVIGATION
 // =====================================
 
 
-function loadMission(){
+function showPage(page){
 
 
-loadJSONP(
+document.getElementById("homePage").style.display="none";
 
-"mission",
+document.getElementById("lettersPage").style.display="none";
 
-function(data){
+document.getElementById("photosPage").style.display="none";
 
-
-let today = new Date();
-
-
-let mtc =
-new Date(data.mtcDate);
-
-
-let mexico =
-new Date(data.mexicoDate);
-
-
-let mission =
-new Date(data.missionStart);
+document.getElementById("mapPage").style.display="none";
 
 
 
-let title="";
-
-let subtitle="";
-
-let days=0;
+document.getElementById(page+"Page").style.display="block";
 
 
 
+if(page==="map"){
 
-if(today < mtc){
-
-
-title="🏠 Home MTC";
-
-subtitle="Preparing to serve";
-
-days =
-daysBetween(today,mtc);
-
-
-}
-
-
-else if(today < mexico){
-
-
-title="🇲🇽 CCM México City";
-
-subtitle="Mission training";
-
-days =
-daysBetween(today,mexico);
-
-
-}
-
-
-else if(today < mission){
-
-
-title="🌵 Monterrey Mission";
-
-subtitle="Almost there";
-
-days =
-daysBetween(today,mission);
-
-
-}
-
-
-else{
-
-
-title="🌵 Monterrey Mission";
-
-subtitle="Serving in Monterrey West, México";
-
-days =
-daysBetween(mission,today);
-
+loadMap();
 
 }
 
 
 
+window.scrollTo({
 
+top:0,
 
-document.getElementById("missionCard").innerHTML =
+behavior:"smooth"
 
-
-`
-
-<div class="status">
-
-
-<div class="mission-title">
-
-${title}
-
-</div>
-
-
-
-<p>
-
-${subtitle}
-
-</p>
-
-
-
-<div class="counter">
-
-${days} Days
-
-</div>
-
-
-
-</div>
-
-`;
-
-
-
-
-}
-
-
-);
+});
 
 
 }
@@ -296,6 +145,160 @@ return Math.ceil(
 
 
 // =====================================
+// MISSION CARD
+// =====================================
+
+
+function loadMission(){
+
+
+
+loadJSONP(
+
+"mission",
+
+function(data){
+
+
+
+let today = new Date();
+
+
+
+let mtc =
+new Date(data.mtcDate);
+
+
+let mexico =
+new Date(data.mexicoDate);
+
+
+let mission =
+new Date(data.missionStart);
+
+
+
+
+let title;
+
+let subtitle;
+
+let days;
+
+
+
+
+
+if(today < mtc){
+
+
+title="🏠 Home MTC";
+
+subtitle="Preparing to serve";
+
+days=daysBetween(today,mtc);
+
+
+}
+
+
+
+else if(today < mexico){
+
+
+title="🇲🇽 CCM México City";
+
+subtitle="Mission training";
+
+days=daysBetween(today,mexico);
+
+
+}
+
+
+
+else if(today < mission){
+
+
+title="🌵 Monterrey Mission";
+
+subtitle="Almost there";
+
+days=daysBetween(today,mission);
+
+
+}
+
+
+
+else{
+
+
+title="🌵 Monterrey Mission";
+
+subtitle="Serving in Monterrey West, México";
+
+days=daysBetween(mission,today);
+
+
+}
+
+
+
+
+
+
+document.getElementById("missionCard").innerHTML=
+
+
+`
+
+<div class="status">
+
+
+<div class="mission-title">
+
+${title}
+
+</div>
+
+
+<p>
+
+${subtitle}
+
+</p>
+
+
+<div class="counter">
+
+${days} Days
+
+</div>
+
+
+</div>
+
+`;
+
+
+
+}
+
+);
+
+
+}
+
+
+
+
+
+
+
+
+
+// =====================================
 // TIMELINE
 // =====================================
 
@@ -311,29 +314,20 @@ let events=[
 
 
 {
-
 name:"🏠 Home MTC",
-
 date:new Date("2026-09-09")
-
 },
 
 
 {
-
 name:"🇲🇽 Mexico City MTC",
-
 date:new Date("2026-09-24")
-
 },
 
 
 {
-
 name:"🌵 Monterrey Mission",
-
 date:new Date("2026-10-21")
-
 }
 
 
@@ -417,7 +411,6 @@ displayLetters();
 
 }
 
-
 );
 
 
@@ -425,12 +418,7 @@ displayLetters();
 
 
 
-
-
-
-
 function displayLetters(){
-
 
 
 let html="";
@@ -440,9 +428,7 @@ let html="";
 if(letters.length>0){
 
 
-
 let latest=letters[0];
-
 
 
 document.getElementById("latest").innerHTML=
@@ -466,7 +452,6 @@ target="_blank">
 Open Letter
 
 </a>
-
 
 `;
 
@@ -523,15 +508,6 @@ document.getElementById("journal").innerHTML=html;
 
 
 }
-
-
-
-
-
-
-
-
-
 // =====================================
 // PHOTOS
 // =====================================
@@ -555,12 +531,10 @@ displayPhotos();
 
 }
 
-
 );
 
 
 }
-
 
 
 
@@ -583,8 +557,8 @@ html +=
 
 <img src="${photo.url}">
 
-
 `;
+
 
 
 });
@@ -605,7 +579,7 @@ document.getElementById("photoGallery").innerHTML=html;
 
 
 // =====================================
-// MAP
+// MAP SYSTEM
 // =====================================
 
 
@@ -622,6 +596,7 @@ mexico:
 
 
 };
+
 
 
 
@@ -649,7 +624,6 @@ y:16.5
 
 
 
-
 mexicoCity:{
 
 
@@ -665,7 +639,6 @@ y:69.5
 
 
 },
-
 
 
 
@@ -694,7 +667,15 @@ y:40.5
 
 
 
+
+
 function setTestLocation(location){
+
+
+
+// this saves the temporary test location
+
+// using your Apps Script backend
 
 
 loadJSONP(
@@ -709,7 +690,6 @@ loadMap();
 
 }
 
-
 );
 
 
@@ -721,10 +701,188 @@ loadMap();
 
 
 
+
+
+function showMapLocation(location){
+
+
+
+loadJSONP(
+
+"map&id="+MAPS[location.map],
+
+function(imageData){
+
+
+document.getElementById("mapImage").src=imageData;
+
+
+}
+
+);
+
+
+
+
+
+let pin =
+document.getElementById("pin");
+
+
+let pulse =
+document.getElementById("pulse");
+
+
+
+
+
+pin.style.left =
+location.x+"%";
+
+
+pin.style.top =
+location.y+"%";
+
+
+
+
+
+pulse.style.left =
+location.x+"%";
+
+
+pulse.style.top =
+location.y+"%";
+
+
+
+
+
+document.getElementById("mapInfo").innerHTML =
+
+
+"<b>"+
+location.name+
+"</b><br>"+
+location.description;
+
+
+
+}
+
+
+
+
+
+
+
+
+
 function loadMap(){
 
 
-console.log("Map ready");
+
+loadJSONP(
+
+"location",
+
+function(testLocation){
+
+
+
+
+
+if(testLocation==="home"){
+
+
+showMapLocation(
+LOCATIONS.tremonton
+);
+
+
+}
+
+
+
+else if(testLocation==="ccm"){
+
+
+showMapLocation(
+LOCATIONS.mexicoCity
+);
+
+
+}
+
+
+
+else if(testLocation==="mission"){
+
+
+showMapLocation(
+LOCATIONS.monterrey
+);
+
+
+}
+
+
+
+else{
+
+
+
+let today =
+new Date();
+
+
+
+
+
+if(today < new Date("2026-09-24")){
+
+
+showMapLocation(
+LOCATIONS.tremonton
+);
+
+
+}
+
+
+
+else if(today < new Date("2026-10-21")){
+
+
+showMapLocation(
+LOCATIONS.mexicoCity
+);
+
+
+}
+
+
+
+else{
+
+
+showMapLocation(
+LOCATIONS.monterrey
+);
+
+
+}
+
+
+
+}
+
+
+
+
+}
+
+);
 
 
 }
@@ -738,7 +896,7 @@ console.log("Map ready");
 
 
 // =====================================
-// START
+// START APP
 // =====================================
 
 
