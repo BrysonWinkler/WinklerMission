@@ -2,36 +2,48 @@
 // WINKLER MISSION JOURNAL APP
 // =====================================
 
-
 console.log("Winkler Mission App Loaded");
-
 
 
 // LOAD MISSION DATA
 
 async function loadMission(){
 
-    const response = await fetch(
-        API_URL + "?action=mission"
-    );
+    try {
 
-    const data = await response.json();
+        const response = await fetch(
+            API_URL + "?action=mission"
+        );
+
+        const data = await response.json();
 
 
-    document.getElementById("status").innerHTML = `
+        document.getElementById("status").innerHTML = `
 
-        🏠 Home MTC:
-        ${data.mtcDate}
-        <br><br>
+            🏠 Home MTC:
+            ${data.mtcDate}
 
-        🇲🇽 Mexico City CCM:
-        ${data.mexicoDate}
-        <br><br>
+            <br><br>
 
-        🌵 Monterrey Mission:
-        ${data.missionStart}
+            🇲🇽 Mexico City CCM:
+            ${data.mexicoDate}
 
-    `;
+            <br><br>
+
+            🌵 Monterrey Mission:
+            ${data.missionStart}
+
+        `;
+
+
+    } catch(error){
+
+        console.error("Mission loading failed:", error);
+
+        document.getElementById("status").innerHTML =
+        "Unable to load mission data.";
+
+    }
 
 }
 
@@ -43,15 +55,22 @@ async function loadMission(){
 
 async function loadLetters(){
 
-    const response = await fetch(
-        API_URL + "?action=letters"
-    );
+    try {
+
+        const response = await fetch(
+            API_URL + "?action=letters"
+        );
+
+        const data = await response.json();
+
+        console.log("Letters:", data);
 
 
-    const data = await response.json();
+    } catch(error){
 
+        console.error("Letters loading failed:", error);
 
-    console.log("Letters:", data);
+    }
 
 }
 
@@ -63,15 +82,22 @@ async function loadLetters(){
 
 async function loadPhotos(){
 
-    const response = await fetch(
-        API_URL + "?action=photos"
-    );
+    try {
+
+        const response = await fetch(
+            API_URL + "?action=photos"
+        );
+
+        const data = await response.json();
+
+        console.log("Photos:", data);
 
 
-    const data = await response.json();
+    } catch(error){
 
+        console.error("Photos loading failed:", error);
 
-    console.log("Photos:", data);
+    }
 
 }
 
