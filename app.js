@@ -281,17 +281,16 @@ function displayTimeline(){
 function loadLetters(){
 
     loadJSONP(
-
         "letters",
-
         function(data){
 
-            letters=data;
+            console.log("Emails loaded:", data);
+
+            letters = data;
 
             displayLetters();
 
         }
-
     );
 
 }
@@ -300,35 +299,42 @@ function loadLetters(){
 
 function displayLetters(){
 
-    let html="";
+    let html = "";
 
 
-    if(letters.length > 0){
+    if(letters && letters.length > 0){
 
-        let latest=letters[0];
+
+        let latest = letters[0];
 
 
         document.getElementById("latest").innerHTML =
 
         `
-
-        <h3>${latest.name}</h3>
-
+        <h3>
+        ${latest.name}
+        </h3>
 
         <a class="button"
-
         href="${latest.url}"
-
         target="_blank">
 
         Open Latest Email
 
         </a>
-
         `;
 
 
     }
+    else{
+
+
+        document.getElementById("latest").innerHTML =
+        "No emails found";
+
+
+    }
+
 
 
     letters.forEach(function(letter){
@@ -337,13 +343,11 @@ function displayLetters(){
         html +=
 
         `
-
         <div class="entry">
 
+
         <h3>
-
         📖 ${letter.name}
-
         </h3>
 
 
@@ -373,9 +377,11 @@ function displayLetters(){
     });
 
 
+
     document.getElementById("journal").innerHTML = html;
 
 }
+
 // =====================================
 // PHOTOS
 // =====================================
