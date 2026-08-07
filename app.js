@@ -2,13 +2,12 @@
 // WINKLER MISSION JOURNAL APP
 // =====================================
 
-
 console.log("Winkler Mission App Loaded");
 
 
-
-
+// =====================================
 // JSONP LOADER
+// =====================================
 
 function loadJSONP(action, callbackName, callback){
 
@@ -16,6 +15,7 @@ function loadJSONP(action, callbackName, callback){
 
 
     const script = document.createElement("script");
+
 
     script.src =
         API_URL +
@@ -32,38 +32,50 @@ function loadJSONP(action, callbackName, callback){
 
 
 
-
-
+// =====================================
 // MISSION DATA
+// =====================================
 
 function loadMission(){
 
+
     loadJSONP(
+
         "mission",
+
         "missionCallback",
+
         function(data){
 
 
             document.getElementById("status").innerHTML = `
 
+
             🏠 Home MTC:
             ${data.mtcDate}
 
+
             <br><br>
+
 
             🇲🇽 Mexico City CCM:
             ${data.mexicoDate}
 
+
             <br><br>
+
 
             🌵 Monterrey Mission:
             ${data.missionStart}
+
 
             `;
 
 
         }
+
     );
+
 
 }
 
@@ -72,19 +84,31 @@ function loadMission(){
 
 
 
-
-// EMAILS
+// =====================================
+// EMAIL ARCHIVE
+// =====================================
 
 function loadLetters(){
 
 
     loadJSONP(
+
         "letters",
+
         "lettersCallback",
+
         function(data){
 
 
-            let html="";
+            let html = "";
+
+
+            if(data.length === 0){
+
+                html = "No emails yet.";
+
+            }
+
 
 
             data.forEach(function(letter){
@@ -92,20 +116,22 @@ function loadLetters(){
 
                 html += `
 
+
                 <div class="card">
 
-                <h3>
-                📖 ${letter.name}
-                </h3>
+
+                    <h3>
+                    📖 ${letter.name}
+                    </h3>
 
 
-                <a class="button"
-                href="${letter.url}"
-                target="_blank">
+                    <a class="button"
+                    href="${letter.url}"
+                    target="_blank">
 
-                Read Letter
+                    Read Letter
 
-                </a>
+                    </a>
 
 
                 </div>
@@ -122,8 +148,8 @@ function loadLetters(){
             .innerHTML = html;
 
 
-
         }
+
     );
 
 
@@ -135,11 +161,63 @@ function loadLetters(){
 
 
 
-// PHOTOS (later)
+// =====================================
+// PHOTOS
+// =====================================
 
 function loadPhotos(){
 
-    console.log("Photos ready for next step");
+
+    loadJSONP(
+
+        "photos",
+
+        "photosCallback",
+
+        function(data){
+
+
+            let html = "";
+
+
+            if(data.length === 0){
+
+                html = "No photos yet.";
+
+            }
+
+
+
+            data.forEach(function(photo){
+
+
+                html += `
+
+
+                <img
+
+                src="${photo.url}"
+
+                alt="${photo.name}"
+
+                >
+
+
+                `;
+
+
+            });
+
+
+
+            document.getElementById("photos")
+            .innerHTML = html;
+
+
+        }
+
+    );
+
 
 }
 
@@ -148,13 +226,20 @@ function loadPhotos(){
 
 
 
+// =====================================
+// START APP
+// =====================================
 
 window.onload=function(){
 
+
     loadMission();
+
 
     loadLetters();
 
+
     loadPhotos();
+
 
 };
