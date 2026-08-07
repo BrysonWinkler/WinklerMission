@@ -1,115 +1,99 @@
-/* =====================================
-   WINKLER MISSION ARCHIVE STYLE
-===================================== */
+*{
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
 
 
-* {
+body{
 
-    box-sizing:border-box;
+margin:0;
+
+font-family:Georgia, serif;
+
+color:#3b2a1f;
+
+background:
+linear-gradient(
+rgba(246,234,211,.95),
+rgba(246,234,211,.95)
+),
+url("https://www.transparenttextures.com/patterns/old-map.png");
 
 }
 
 
+/* =====================
+HERO
+===================== */
 
-html {
+.hero{
 
-    scroll-behavior:smooth;
+background:
+linear-gradient(
+135deg,
+#c96b3b,
+#355834
+);
 
-}
+color:white;
 
+padding:70px 20px;
 
+text-align:center;
 
-body {
+position:relative;
 
-    margin:0;
-
-    font-family:Georgia, serif;
-
-    color:#3b2a1f;
-
-    background:#f6ead3;
-
-}
-
-
-
-
-
-/* =====================================
-   HERO
-===================================== */
-
-
-.hero {
-
-    background:
-    linear-gradient(
-        135deg,
-        #c96b3b,
-        #355834
-    );
-
-    color:white;
-
-    padding:60px 20px;
-
-    text-align:center;
-
-    position:relative;
-
-    overflow:hidden;
+overflow:hidden;
 
 }
 
 
+.hero h1{
 
-.hero h1 {
+font-size:48px;
 
-    font-size:45px;
+margin:0 0 15px;
 
-    margin-bottom:15px;
-
-    text-shadow:
-    0 3px 8px rgba(0,0,0,.3);
-
-}
-
-
-
-.hero p {
-
-    font-size:22px;
+text-shadow:
+0 3px 8px rgba(0,0,0,.3);
 
 }
 
 
+.hero p{
 
-.hero small {
-
-    display:block;
-
-    margin-top:20px;
+font-size:21px;
 
 }
 
 
+.hero small{
+
+display:block;
+
+margin-top:20px;
+
+}
 
 
+.hero:after{
 
+content:"🌵 ☀️ 🏜️ 🇲🇽";
 
+position:absolute;
 
-/* =====================================
-   LAYOUT
-===================================== */
+bottom:5px;
 
+left:0;
 
-.container {
+right:0;
 
-    max-width:950px;
+font-size:45px;
 
-    margin:auto;
-
-    padding:30px 20px;
+opacity:.25;
 
 }
 
@@ -117,32 +101,17 @@ body {
 
 
 
+/* =====================
+LAYOUT
+===================== */
 
+.container{
 
-/* =====================================
-   CARDS
-===================================== */
+max-width:950px;
 
+margin:auto;
 
-.card {
-
-    background:#fffaf0;
-
-    border-radius:25px;
-
-    padding:30px;
-
-    margin-bottom:30px;
-
-
-    box-shadow:
-
-    0 12px 25px rgba(80,40,10,.15);
-
-
-    border:
-
-    1px solid #d8b98b;
+padding:30px 20px;
 
 }
 
@@ -150,57 +119,43 @@ body {
 
 
 
-/* =====================================
-   BUTTONS
-===================================== */
+/* =====================
+NAVIGATION
+===================== */
 
+.nav{
 
-.button {
+display:flex;
 
-    display:inline-block;
+justify-content:center;
 
-    background:#355834;
+gap:12px;
 
-    color:white;
+flex-wrap:wrap;
 
-    padding:12px 22px;
-
-    border-radius:18px;
-
-    text-decoration:none;
-
-    margin-top:10px;
-
-    cursor:pointer;
+margin-bottom:30px;
 
 }
 
 
+.nav button{
 
-.button:hover {
+background:#355834;
 
-    opacity:.85;
+color:white;
 
-}
+border:none;
 
+padding:14px 22px;
 
+border-radius:18px;
 
+cursor:pointer;
 
+font-size:16px;
 
-
-
-/* =====================================
-   EMAILS
-===================================== */
-
-
-#letters .card {
-
-    background:#fff8e7;
-
-    border-left:
-
-    8px solid #8b5a2b;
+box-shadow:
+0 5px 12px rgba(0,0,0,.2);
 
 }
 
@@ -208,44 +163,27 @@ body {
 
 
 
+/* =====================
+CARDS
+===================== */
 
-/* =====================================
-   PHOTOS
-===================================== */
+.card,
+.status,
+.entry{
 
+background:#fffaf0;
 
-.gallery {
+border-radius:25px;
 
-    display:grid;
+padding:30px;
 
-    grid-template-columns:
+margin-bottom:30px;
 
-    repeat(auto-fit,minmax(220px,1fr));
+box-shadow:
+0 12px 25px rgba(80,40,10,.15);
 
-    gap:18px;
-
-}
-
-
-
-
-
-.gallery img {
-
-    width:100%;
-
-
-    border-radius:18px;
-
-
-    box-shadow:
-
-    0 8px 18px rgba(0,0,0,.25);
-
-
-    border:
-
-    6px solid white;
+border:
+1px solid #d8b98b;
 
 }
 
@@ -253,29 +191,356 @@ body {
 
 
 
+/* =====================
+HOME
+===================== */
+
+.home-top{
+
+display:flex;
+
+gap:20px;
+
+align-items:flex-start;
+
+}
 
 
-/* =====================================
-   MOBILE
-===================================== */
+.home-main{
+
+flex:1;
+
+}
 
 
-@media(max-width:700px){
+.countdown-box{
+
+width:230px;
+
+padding:15px;
+
+font-size:14px;
+
+}
 
 
-    .hero h1 {
+.countdown-box h2{
 
-        font-size:32px;
+font-size:18px;
 
-    }
+margin-top:0;
+
+color:#355834;
+
+}
+
+
+.countdown-item{
+
+background:#f6ead3;
+
+padding:10px;
+
+margin-bottom:8px;
+
+border-radius:12px;
+
+text-align:center;
+
+}
+
+
+.countdown-item strong{
+
+display:block;
+
+font-size:18px;
+
+color:#c96b3b;
+
+}
 
 
 
-    .card {
+@media(max-width:900px){
 
-        padding:20px;
+.home-top{
 
-    }
+display:block;
 
+}
+
+
+.countdown-box{
+
+width:100%;
+
+}
+
+}
+
+
+
+
+
+/* =====================
+MISSION CARD
+===================== */
+
+
+.status{
+
+text-align:center;
+
+}
+
+
+.mission-title{
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#355834;
+
+}
+
+
+.counter{
+
+font-size:42px;
+
+font-weight:bold;
+
+color:#c96b3b;
+
+}
+
+
+
+
+
+/* =====================
+BUTTONS
+===================== */
+
+.button{
+
+display:inline-block;
+
+background:#355834;
+
+color:white;
+
+padding:12px 22px;
+
+border-radius:18px;
+
+text-decoration:none;
+
+cursor:pointer;
+
+border:none;
+
+margin:5px;
+
+font-size:15px;
+
+}
+
+
+
+
+
+/* =====================
+LETTERS
+===================== */
+
+.entry{
+
+border-left:
+8px solid #8b5a2b;
+
+background:#fff8e7;
+
+}
+
+
+.date{
+
+color:#806b5a;
+
+margin-bottom:20px;
+
+}
+
+
+
+
+
+/* =====================
+PHOTOS
+===================== */
+
+.gallery{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:18px;
+
+}
+
+
+.gallery img{
+
+width:100%;
+
+border-radius:18px;
+
+box-shadow:
+0 8px 18px rgba(0,0,0,.25);
+
+border:
+6px solid white;
+
+}
+
+
+
+
+
+/* =====================
+MAP
+===================== */
+
+
+.map-container {
+
+position:relative;
+
+width:450px;
+
+max-width:90%;
+
+margin:20px auto;
+
+background:white;
+
+padding:15px;
+
+border:5px solid #4b3a2a;
+
+border-radius:20px;
+
+box-shadow:
+0 6px 20px rgba(0,0,0,.25);
+
+}
+
+
+#mapImage {
+
+width:100%;
+
+display:block;
+
+border-radius:10px;
+
+}
+
+
+
+.pin {
+
+position:absolute;
+
+width:28px;
+
+height:28px;
+
+background:#d62828;
+
+border-radius:50% 50% 50% 0;
+
+transform:
+translate(-50%,-100%)
+rotate(-45deg);
+
+z-index:5;
+
+}
+
+
+
+.pin::after {
+
+content:"";
+
+position:absolute;
+
+width:10px;
+
+height:10px;
+
+background:white;
+
+border-radius:50%;
+
+top:9px;
+
+left:9px;
+
+}
+
+
+
+.pulse {
+
+position:absolute;
+
+width:35px;
+
+height:35px;
+
+background:
+rgba(214,40,40,.35);
+
+border-radius:50%;
+
+transform:
+translate(-50%,-50%);
+
+animation:pulse 1.5s infinite;
+
+}
+
+
+
+@keyframes pulse {
+
+
+0%{
+
+transform:
+translate(-50%,-50%)
+scale(.8);
+
+opacity:.8;
+
+}
+
+
+100%{
+
+transform:
+translate(-50%,-50%)
+scale(2.5);
+
+opacity:0;
+
+}
 
 }
