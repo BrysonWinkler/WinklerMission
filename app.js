@@ -2,6 +2,16 @@
 // WINKLER MISSION ARCHIVE
 // APP.JS
 // =====================================
+// =====================================
+// APP VERSION CONTROL
+// =====================================
+
+const APP_VERSION = "1.0.2";
+
+console.log(
+    "Winkler Mission Archive Version:",
+    APP_VERSION
+);
 
 console.log("Winkler Mission App Loaded");
 
