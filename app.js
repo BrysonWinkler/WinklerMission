@@ -3,13 +3,11 @@
 // =====================================
 
 
-// Test connection
-
 console.log("Winkler Mission App Loaded");
 
 
 
-// Load mission information
+// LOAD MISSION DATA
 
 async function loadMission(){
 
@@ -19,12 +17,29 @@ async function loadMission(){
 
     const data = await response.json();
 
-    console.log(data);
+
+    document.getElementById("status").innerHTML = `
+
+        🏠 Home MTC:
+        ${data.mtcDate}
+        <br><br>
+
+        🇲🇽 Mexico City CCM:
+        ${data.mexicoDate}
+        <br><br>
+
+        🌵 Monterrey Mission:
+        ${data.missionStart}
+
+    `;
 
 }
 
 
-// Load letters
+
+
+
+// LOAD LETTERS
 
 async function loadLetters(){
 
@@ -32,14 +47,19 @@ async function loadLetters(){
         API_URL + "?action=letters"
     );
 
+
     const data = await response.json();
 
-    console.log(data);
+
+    console.log("Letters:", data);
 
 }
 
 
-// Load photos
+
+
+
+// LOAD PHOTOS
 
 async function loadPhotos(){
 
@@ -47,15 +67,19 @@ async function loadPhotos(){
         API_URL + "?action=photos"
     );
 
+
     const data = await response.json();
 
-    console.log(data);
+
+    console.log("Photos:", data);
 
 }
 
 
 
-// Start app
+
+
+// START APP
 
 window.onload = function(){
 
