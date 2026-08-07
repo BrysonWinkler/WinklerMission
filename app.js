@@ -5,7 +5,6 @@
 
 console.log("Winkler Mission App Loaded");
 
-
 let letters = [];
 let photos = [];
 
@@ -54,7 +53,6 @@ function loadJSONP(action, callback){
 // =====================================
 
 function showPage(page){
-
 
     document.getElementById("homePage").style.display="none";
     document.getElementById("lettersPage").style.display="none";
@@ -106,7 +104,9 @@ function loadMission(){
 
 
     loadJSONP(
+
         "mission",
+
         function(data){
 
 
@@ -174,21 +174,21 @@ function loadMission(){
 
                 <div class="mission-title">
 
-                    ${title}
+                ${title}
 
                 </div>
 
 
                 <p>
 
-                    ${subtitle}
+                ${subtitle}
 
                 </p>
 
 
                 <div class="counter">
 
-                    ${days} Days
+                ${days} Days
 
                 </div>
 
@@ -202,6 +202,7 @@ function loadMission(){
 
     );
 
+
 }
 
 
@@ -212,37 +213,30 @@ function loadMission(){
 
 function displayTimeline(){
 
-
     let today = new Date();
 
 
     let events=[
-
 
         {
             name:"🏠 Home MTC",
             date:new Date("2026-09-09")
         },
 
-
         {
             name:"🇲🇽 Mexico City MTC",
             date:new Date("2026-09-24")
         },
-
 
         {
             name:"🌵 Monterrey Mission",
             date:new Date("2026-10-21")
         }
 
-
     ];
 
 
-
     let html="";
-
 
 
     events.forEach(function(event){
@@ -252,24 +246,19 @@ function displayTimeline(){
         daysBetween(today,event.date);
 
 
-
         html +=
-
 
         `
 
         <div class="countdown-item">
 
+        ${event.name}
 
-            ${event.name}
+        <strong>
 
+        ${days > 0 ? days+" Days":"Started ✓"}
 
-            <strong>
-
-            ${days > 0 ? days+" Days" : "Started ✓"}
-
-            </strong>
-
+        </strong>
 
         </div>
 
@@ -279,9 +268,7 @@ function displayTimeline(){
     });
 
 
-
     document.getElementById("timeline").innerHTML = html;
-
 
 }
 
@@ -293,24 +280,19 @@ function displayTimeline(){
 
 function loadLetters(){
 
-
     loadJSONP(
 
         "letters",
 
         function(data){
 
-
             letters=data;
 
-
             displayLetters();
-
 
         }
 
     );
-
 
 }
 
@@ -318,27 +300,19 @@ function loadLetters(){
 
 function displayLetters(){
 
-
     let html="";
-
 
 
     if(letters.length > 0){
 
-
-        let latest = letters[0];
+        let latest=letters[0];
 
 
         document.getElementById("latest").innerHTML =
 
-
         `
 
-        <h3>
-
-        ${latest.name}
-
-        </h3>
+        <h3>${latest.name}</h3>
 
 
         <a class="button"
@@ -347,57 +321,51 @@ function displayLetters(){
 
         target="_blank">
 
-
         Open Latest Email
 
-
         </a>
-
 
         `;
 
 
     }
-        letters.forEach(function(letter){
+
+
+    letters.forEach(function(letter){
 
 
         html +=
-
 
         `
 
         <div class="entry">
 
+        <h3>
 
-            <h3>
+        📖 ${letter.name}
 
-            📖 ${letter.name}
-
-            </h3>
-
-
-            <div class="date">
-
-            ${new Date(letter.date).toLocaleDateString()}
-
-            </div>
+        </h3>
 
 
-            <a class="button"
+        <div class="date">
 
-            href="${letter.url}"
-
-            target="_blank">
-
-
-            Read Letter
-
-
-            </a>
-
+        ${new Date(letter.date).toLocaleDateString()}
 
         </div>
 
+
+        <a class="button"
+
+        href="${letter.url}"
+
+        target="_blank">
+
+        Read Letter
+
+        </a>
+
+
+        </div>
 
         `;
 
@@ -405,20 +373,14 @@ function displayLetters(){
     });
 
 
-
     document.getElementById("journal").innerHTML = html;
 
-
 }
-
-
-
 // =====================================
 // PHOTOS
 // =====================================
 
 function loadPhotos(){
-
 
     loadJSONP(
 
@@ -426,25 +388,19 @@ function loadPhotos(){
 
         function(data){
 
-
             photos=data;
 
-
             displayPhotos();
-
 
         }
 
     );
 
-
 }
 
 
 
-
 function displayPhotos(){
-
 
     let html="";
 
@@ -453,7 +409,6 @@ function displayPhotos(){
 
 
         html +=
-
 
         `
 
@@ -465,11 +420,11 @@ function displayPhotos(){
     });
 
 
-
     document.getElementById("photoGallery").innerHTML = html;
 
-
 }
+
+
 
 
 
@@ -480,16 +435,12 @@ function displayPhotos(){
 
 const MAPS={
 
-
     utah:
-
     "1-KUPC_9u7V9t-96XTCz3Sj_H8caD0IRr",
 
 
     mexico:
-
     "1syyre3laiwnkMWDKYnorvfA9OLOOyCRQ"
-
 
 };
 
@@ -556,16 +507,37 @@ const LOCATIONS={
 
 
 
+// =====================================
+// MAP BUTTON CONTROLS
+// =====================================
+
+function setTestLocation(location){
+
+
+    loadJSONP(
+
+        "setLocation&location=" + location,
+
+        function(){
+
+            loadMap();
+
+        }
+
+    );
+
+
+}
+
+
 
 
 function showMapLocation(location){
 
 
-
     loadJSONP(
 
-        "map&id="+MAPS[location.map],
-
+        "map&id=" + MAPS[location.map],
 
         function(imageData){
 
@@ -579,15 +551,12 @@ function showMapLocation(location){
 
 
 
-
-
     let pin =
     document.getElementById("pin");
 
 
     let pulse =
     document.getElementById("pulse");
-
 
 
 
@@ -609,8 +578,6 @@ function showMapLocation(location){
 
 
 
-
-
     document.getElementById("mapInfo").innerHTML =
 
 
@@ -628,7 +595,6 @@ function showMapLocation(location){
 
     ${location.description}
 
-
     `;
 
 
@@ -637,8 +603,8 @@ function showMapLocation(location){
 
 
 
-function loadMap(){
 
+function loadMap(){
 
 
     loadJSONP(
@@ -662,6 +628,7 @@ function loadMap(){
             }
 
 
+
             else if(testLocation==="ccm"){
 
 
@@ -675,12 +642,79 @@ function loadMap(){
             }
 
 
-            else{
+
+            else if(testLocation==="mission"){
 
 
                 showMapLocation(
 
                     LOCATIONS.monterrey
+
+                );
+
+
+            }
+
+
+
+            else if(testLocation==="auto"){
+
+
+                let today = new Date();
+
+
+
+                if(today < new Date("2026-09-24")){
+
+
+                    showMapLocation(
+
+                        LOCATIONS.tremonton
+
+                    );
+
+
+                }
+
+
+
+                else if(today < new Date("2026-10-21")){
+
+
+                    showMapLocation(
+
+                        LOCATIONS.mexicoCity
+
+                    );
+
+
+                }
+
+
+
+                else{
+
+
+                    showMapLocation(
+
+                        LOCATIONS.monterrey
+
+                    );
+
+
+                }
+
+
+            }
+
+
+
+            else{
+
+
+                showMapLocation(
+
+                    LOCATIONS.tremonton
 
                 );
 
