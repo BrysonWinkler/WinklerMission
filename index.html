@@ -18,19 +18,16 @@
 <div class="hero">
 
 <h1>
-📖 Winkler Mission Archive
+📖 Mission Archive
 </h1>
-
 
 <p>
 Elder Bryson Dale Winkler
 </p>
 
-
 <small>
 🇲🇽 Monterrey, West México Mission • 2026-2028
 </small>
-
 
 </div>
 
@@ -42,18 +39,90 @@ Elder Bryson Dale Winkler
 
 
 
-<div class="card">
+<div class="nav">
+
+
+<button onclick="showPage('home')">
+
+🏠 Home
+
+</button>
+
+
+
+<button onclick="showPage('letters')">
+
+📖 Emails
+
+</button>
+
+
+
+<button onclick="showPage('photos')">
+
+📸 Photos
+
+</button>
+
+
+
+<button onclick="showPage('map')">
+
+🗺️ Map
+
+</button>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- HOME -->
+
+<div id="homePage">
+
+
+
+<div class="home-top">
+
+
+<div class="home-main">
+
+
+<div id="missionCard">
+
+Loading mission...
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="card countdown-box">
+
 
 <h2>
 📅 Mission Timeline
 </h2>
 
 
-<p id="status">
+<div id="timeline">
 
-Loading mission data...
+Loading timeline...
 
-</p>
+</div>
+
+
+</div>
+
 
 
 </div>
@@ -63,46 +132,133 @@ Loading mission data...
 
 
 
-
 <div class="card">
 
+
 <h2>
-✉️ Email Archive
+✉️ Latest Email
 </h2>
 
 
-<div id="letters">
 
-Loading emails...
+<div id="latest">
 
-</div>
-
+Loading...
 
 </div>
 
 
 
+</div>
 
 
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- LETTERS -->
+
+<div id="lettersPage" style="display:none;">
 
 
 <div class="card">
+
+
+<h2>
+📖 Email Archive
+</h2>
+
+
+
+<div id="journal">
+
+Loading Emails...
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- PHOTOS -->
+
+<div id="photosPage" style="display:none;">
+
+
+<div class="card">
+
 
 <h2>
 📸 Mexico Memories
 </h2>
 
 
-<div id="photos" class="gallery">
+
+<p>
+Pictures
+</p>
+
+
+
+<div id="photoGallery" class="gallery">
 
 Loading photos...
 
 </div>
 
 
+
 </div>
 
 
+</div>
+
+
+
+
+
+
+
+
+
+<!-- MAP -->
+
+<div id="mapPage" style="display:none;">
+
+
+<div class="card">
+
+
+<button class="button" onclick="showPage('home')">
+
+← Back to Journal
+
+</button>
+
+
+
+
+<h2>
+🗺️ Mission Journey Map
+</h2>
 
 
 
@@ -110,25 +266,93 @@ Loading photos...
 
 <div class="card">
 
-<h2>
-🗺️ Mission Journey Map
-</h2>
+
+<h3>
+Different Maps
+</h3>
 
 
 <p>
-
-Map coming soon...
-
+Click to see different maps
 </p>
 
 
+
+<button class="button" onclick="setTestLocation('home')">
+
+🏠 Home MTC
+
+</button>
+
+
+
+
+<button class="button" onclick="setTestLocation('ccm')">
+
+🇲🇽 CCM México
+
+</button>
+
+
+
+
+<button class="button" onclick="setTestLocation('mission')">
+
+🌵 Monterrey West Mission
+
+</button>
+
+
+
+
+<button class="button" onclick="setTestLocation('auto')">
+
+📅 Where is Bryson?
+
+</button>
+
+
+
 </div>
 
 
 
 
 
+
+
+<div class="map-container">
+
+
+<img id="mapImage">
+
+
+
+<div id="pulse" class="pulse"></div>
+
+
+<div id="pin" class="pin"></div>
+
+
+
 </div>
+
+
+
+
+<div id="mapInfo" class="date">
+
+Loading location...
+
+</div>
+
+
+
+</div>
+
+
+</div>
+
 
 
 
