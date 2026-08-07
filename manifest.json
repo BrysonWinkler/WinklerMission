@@ -1,0 +1,15 @@
+{
+  "name": "Winkler Mission Archive",
+  "short_name": "Mission Archive",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6ead3",
+  "theme_color": "#355834",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
