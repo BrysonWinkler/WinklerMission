@@ -5,16 +5,30 @@
 
 <title>Winkler Mission Archive</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#355834">
+<link
+    rel="manifest"
+    href="manifest.json?v=2.0.0"
+>
 
-<!-- App Icon -->
-<link rel="icon" href="icon.png">
+<meta
+    name="theme-color"
+    content="#355834"
+>
 
-<link rel="stylesheet" href="style.css?v=1.0.2">
+<link
+    rel="icon"
+    href="icon.png?v=2.0.0"
+>
+
+<link
+    rel="stylesheet"
+    href="style.css?v=2.0.0"
+>
 
 </head>
 
@@ -39,51 +53,28 @@ Elder Bryson Dale Winkler
 </div>
 
 
-
-
-
 <div class="container">
-
 
 
 <div class="nav">
 
-
 <button onclick="showPage('home')">
-
 🏠 Home
-
 </button>
-
-
 
 <button onclick="showPage('letters')">
-
 📖 Emails
-
 </button>
-
-
 
 <button onclick="showPage('photos')">
-
 📸 Photos
-
 </button>
-
-
 
 <button onclick="showPage('map')">
-
 🗺️ Map
-
 </button>
 
-
 </div>
-
-
-
 
 
 <!-- HOME -->
@@ -91,168 +82,118 @@ Elder Bryson Dale Winkler
 <div id="homePage">
 
 
-
 <div class="home-top">
 
 
 <div class="home-main">
 
-
 <div id="missionCard">
-
 Loading mission...
-
 </div>
 
-
 </div>
-
-
-
 
 
 <div class="card countdown-box">
-
 
 <h2>
 📅 Mission Timeline
 </h2>
 
-
 <div id="timeline">
-
 Loading timeline...
+</div>
 
 </div>
 
 
 </div>
-
-
-
-</div>
-
-
-
-
 
 
 <div class="card">
-
 
 <h2>
 ✉️ Latest Email
 </h2>
 
-
-
 <div id="latest">
-
 Loading...
+</div>
 
 </div>
 
 
-
 </div>
-
-
-
-</div>
-
-
-
-
-
 
 
 <!-- LETTERS -->
 
-<div id="lettersPage" style="display:none;">
-
+<div
+    id="lettersPage"
+    style="display:none;"
+>
 
 <div class="card">
-
 
 <h2>
 📖 Email Archive
 </h2>
 
-
-
 <div id="journal">
-
 Loading Emails...
+</div>
 
 </div>
 
-
-
 </div>
-
-
-</div>
-
-
-
-
-
 
 
 <!-- PHOTOS -->
 
-<div id="photosPage" style="display:none;">
-
+<div
+    id="photosPage"
+    style="display:none;"
+>
 
 <div class="card">
-
 
 <h2>
 📸 Mexico Memories
 </h2>
 
-
-
 <p>
 Pictures
 </p>
 
-
-
-<div id="photoGallery" class="gallery">
+<div
+    id="photoGallery"
+    class="gallery"
+>
 
 Loading photos...
 
 </div>
 
-
-
 </div>
 
-
 </div>
-
-
-
-
-
 
 
 <!-- MAP -->
 
-<div id="mapPage" style="display:none;">
-
+<div
+    id="mapPage"
+    style="display:none;"
+>
 
 <div class="card">
 
-
-<button class="button" onclick="showPage('home')">
-
+<button
+    class="button"
+    onclick="showPage('home')"
+>
 ← Back to Journal
-
 </button>
-
-
 
 
 <h2>
@@ -260,107 +201,85 @@ Loading photos...
 </h2>
 
 
-
-
-
 <div class="card">
-
 
 <h3>
 Different Maps
 </h3>
-
 
 <p>
 Click to see different maps
 </p>
 
 
-
-<button class="button" onclick="setTestLocation('home')">
-
+<button
+    class="button"
+    onclick="setTestLocation('home')"
+>
 🏠 Home MTC
-
 </button>
 
 
-
-
-<button class="button" onclick="setTestLocation('ccm')">
-
+<button
+    class="button"
+    onclick="setTestLocation('ccm')"
+>
 🇲🇽 CCM México
-
 </button>
 
 
-
-
-<button class="button" onclick="setTestLocation('mission')">
-
+<button
+    class="button"
+    onclick="setTestLocation('mission')"
+>
 🌵 Monterrey West Mission
-
 </button>
 
 
-
-
-<button class="button" onclick="setTestLocation('auto')">
-
+<button
+    class="button"
+    onclick="setTestLocation('auto')"
+>
 📅 Where is Bryson?
-
 </button>
-
-
 
 </div>
-
-
-
-
-
 
 
 <div class="map-container">
 
-
 <img id="mapImage">
 
+<div
+    id="pulse"
+    class="pulse"
+></div>
 
-
-<div id="pulse" class="pulse"></div>
-
-
-<div id="pin" class="pin"></div>
-
-
+<div
+    id="pin"
+    class="pin"
+></div>
 
 </div>
 
 
-
-
-<div id="mapInfo" class="date">
-
+<div
+    id="mapInfo"
+    class="date"
+>
 Loading location...
+</div>
+
+</div>
 
 </div>
 
 
+<!-- JAVASCRIPT -->
 
-</div>
+<script src="config.js?v=2.0.0"></script>
 
-
-</div>
-
-
-
-
-
-
-
-<script src="config.js?v=1.0.2"></script>
-
-<script src="app.js?v=1.0.2"></script>
+<script src="app.js?v=2.0.0"></script>
 
 
 </body>
