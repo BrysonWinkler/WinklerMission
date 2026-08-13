@@ -3,70 +3,278 @@
 // APP.JS
 // =====================================
 
-const APP_VERSION = "1.0.3";
+const APP_VERSION = "3.1.0";
 
-console.log(
-    "Winkler Mission Archive Version:",
-    APP_VERSION
-);
+console.log("=================================");
+console.log("WINKLER MISSION ARCHIVE");
+console.log("APP VERSION:", APP_VERSION);
+console.log("=================================");
 
 let letters = [];
 let photos = [];
 
 
 // =====================================
-// JSONP CONNECTION
+// API / JSONP
 // =====================================
 
-function loadJSONP(action, callback) {
+function loadJSONP(action, params = {}) {
 
-    const callbackName =
-        "callback_" +
-        Date.now() +
-        "_" +
-        Math.random()
-            .toString(36)
-            .substring(2);
+    return new Promise(function(resolve, reject) {
 
-
-    window[callbackName] = function(data) {
-
-        callback(data);
-
-        delete window[callbackName];
-
-        if (script.parentNode) {
-            script.remove();
-        }
-
-    };
+        const callbackName =
+            "missionCallback_" +
+            Date.now() +
+            "_" +
+            Math.floor(Math.random() * 100000);
 
 
-    const script =
-        document.createElement("script");
+        const script =
+            document.createElement("script");
 
 
-    script.src =
-        API_URL +
-        "?action=" +
-        action +
-        "&callback=" +
-        callbackName +
-        "&t=" +
-        Date.now();
+        let url =
+            API_URL +
+            "?action=" +
+            encodeURIComponent(action);
 
 
-    script.onerror = function() {
+        // Add additional parameters
+        Object.keys(params).forEach(function(key) {
 
-        console.error(
-            "Mission Archive API failed:",
-            script.src
+            url +=
+                "&" +
+                encodeURIComponent(key) +
+                "=" +
+                encodeURIComponent(params[key]);
+
+        });
+
+
+        // JSONP callback
+        url +=
+            "&callback=" +
+            encodeURIComponent(callbackName);
+
+
+        // Cache breaker
+        url +=
+            "&t=" +
+            Date.now();
+
+
+        let completed = false;
+
+
+        window[callbackName] = function(data) {
+
+            if (completed) {
+                return;
+            }
+
+
+            completed = true;
+
+
+            console.log(
+                "API SUCCESS:",
+                action,
+                data
+            );
+
+
+            delete window[callbackName];
+
+
+            if (script.parentNode) {
+
+                script.parentNode.removeChild(script);
+
+            }
+
+
+            resolve(data);
+
+        };
+
+
+        script.onerror = function() {
+
+            if (completed) {
+                return;
+            }
+
+
+            completed = true;
+
+
+            console.error(
+                "API ERROR:",
+                action
+            );
+
+
+            delete window[callbackName];
+
+
+            if (script.parentNode) {
+
+                script.parentNode.removeChild(script);
+
+            }
+
+
+            reject(
+                new Error(
+                    "API request failed: " +
+                    action
+                )
+            );
+
+        };
+
+
+        script.src = url;
+
+
+        console.log(
+            "API REQUEST:",
+            url
         );
 
-    };
+
+        document.body.appendChild(script);
 
 
-    document.body.appendChild(script);
+        // Timeout after 20 seconds
+        setTimeout(function() {
+
+            if (completed) {
+                return;
+            }
+
+
+            completed = true;
+
+
+            delete window[callbackName];
+
+
+            if (script.parentNode) {
+
+                script.parentNode.removeChild(script);
+
+            }
+
+
+            reject(
+                new Error(
+                    "API timeout: " +
+                    action
+                )
+            );
+
+        }, 20000);
+
+    });
+
+}
+
+
+// =====================================
+// MANUAL SYNC
+// =====================================
+
+async function refreshArchive() {
+
+    const button =
+        document.getElementById(
+            "refreshButton"
+        );
+
+
+    if (button) {
+
+        button.disabled = true;
+
+        button.innerText =
+            "🔄 Syncing...";
+
+    }
+
+
+    console.log(
+        "================================="
+    );
+
+    console.log(
+        "MANUAL ARCHIVE SYNC"
+    );
+
+    console.log(
+        "================================="
+    );
+
+
+    try {
+
+        await Promise.all([
+
+            loadLetters(),
+
+            loadPhotos(),
+
+            loadMission()
+
+        ]);
+
+
+        console.log(
+            "ARCHIVE SYNC COMPLETE"
+        );
+
+
+        if (button) {
+
+            button.innerText =
+                "✓ Synced";
+
+        }
+
+
+        setTimeout(function() {
+
+            if (button) {
+
+                button.innerText =
+                    "🔄 Sync Archive";
+
+                button.disabled = false;
+
+            }
+
+        }, 2000);
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "ARCHIVE SYNC FAILED:",
+            error
+        );
+
+
+        if (button) {
+
+            button.innerText =
+                "❌ Sync Failed";
+
+            button.disabled = false;
+
+        }
+
+    }
 
 }
 
@@ -77,27 +285,29 @@ function loadJSONP(action, callback) {
 
 function showPage(page) {
 
-    document.getElementById("homePage").style.display = "none";
+    document.getElementById(
+        "homePage"
+    ).style.display = "none";
 
-    document.getElementById("lettersPage").style.display = "none";
 
-    document.getElementById("photosPage").style.display = "none";
+    document.getElementById(
+        "lettersPage"
+    ).style.display = "none";
 
-    document.getElementById("mapPage").style.display = "none";
+
+    document.getElementById(
+        "photosPage"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "mapPage"
+    ).style.display = "none";
 
 
     document.getElementById(
         page + "Page"
     ).style.display = "block";
-
-
-    if (page === "home") {
-
-        loadMission();
-
-        loadLetters();
-
-    }
 
 
     if (page === "letters") {
@@ -147,127 +357,146 @@ function daysBetween(a, b) {
 
 
 // =====================================
-// MISSION CARD
+// MISSION
 // =====================================
 
-function loadMission() {
+async function loadMission() {
 
-    loadJSONP(
+    try {
 
-        "mission",
-
-        function(data) {
-
-            const today =
-                new Date();
+        const data =
+            await loadJSONP(
+                "mission"
+            );
 
 
-            const mtc =
-                new Date(data.mtcDate);
+        const today =
+            new Date();
 
 
-            const mexico =
-                new Date(data.mexicoDate);
+        const mtc =
+            new Date(
+                data.mtcDate
+            );
 
 
-            const mission =
-                new Date(data.missionStart);
+        const mexico =
+            new Date(
+                data.mexicoDate
+            );
 
 
-            let title;
-            let subtitle;
-            let days;
+        const mission =
+            new Date(
+                data.missionStart
+            );
 
 
-            if (today < mtc) {
-
-                title = "🏠 Home MTC";
-
-                subtitle =
-                    "Preparing to serve";
-
-                days =
-                    daysBetween(
-                        today,
-                        mtc
-                    );
-
-            }
-
-            else if (today < mexico) {
-
-                title =
-                    "🇲🇽 CCM México City";
-
-                subtitle =
-                    "Mission training";
-
-                days =
-                    daysBetween(
-                        today,
-                        mexico
-                    );
-
-            }
-
-            else if (today < mission) {
-
-                title =
-                    "🌵 Monterrey Mission";
-
-                subtitle =
-                    "Almost there";
-
-                days =
-                    daysBetween(
-                        today,
-                        mission
-                    );
-
-            }
-
-            else {
-
-                title =
-                    "🌵 Monterrey Mission";
-
-                subtitle =
-                    "Serving in Monterrey West, México";
-
-                days =
-                    daysBetween(
-                        mission,
-                        today
-                    );
-
-            }
+        let title;
+        let subtitle;
+        let days;
 
 
-            document.getElementById(
-                "missionCard"
-            ).innerHTML = `
+        if (today < mtc) {
 
-                <div class="status">
+            title =
+                "🏠 Home MTC";
 
-                    <div class="mission-title">
-                        ${title}
-                    </div>
+            subtitle =
+                "Preparing to serve";
 
-                    <p>
-                        ${subtitle}
-                    </p>
-
-                    <div class="counter">
-                        ${days} Days
-                    </div>
-
-                </div>
-
-            `;
+            days =
+                daysBetween(
+                    today,
+                    mtc
+                );
 
         }
 
-    );
+        else if (today < mexico) {
+
+            title =
+                "🇲🇽 CCM México City";
+
+            subtitle =
+                "Mission training";
+
+            days =
+                daysBetween(
+                    today,
+                    mexico
+                );
+
+        }
+
+        else if (today < mission) {
+
+            title =
+                "🌵 Monterrey Mission";
+
+            subtitle =
+                "Almost there";
+
+            days =
+                daysBetween(
+                    today,
+                    mission
+                );
+
+        }
+
+        else {
+
+            title =
+                "🌵 Monterrey Mission";
+
+            subtitle =
+                "Serving in Monterrey West, México";
+
+            days =
+                daysBetween(
+                    mission,
+                    today
+                );
+
+        }
+
+
+        document.getElementById(
+            "missionCard"
+        ).innerHTML = `
+
+            <div class="status">
+
+                <div class="mission-title">
+                    ${title}
+                </div>
+
+                <p>
+                    ${subtitle}
+                </p>
+
+                <div class="counter">
+                    ${days} Days
+                </div>
+
+            </div>
+
+        `;
+
+
+        return data;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "MISSION ERROR:",
+            error
+        );
+
+    }
 
 }
 
@@ -286,17 +515,23 @@ function displayTimeline() {
 
         {
             name: "🏠 Home MTC",
-            date: new Date("2026-09-09")
+            date: new Date(
+                "2026-09-09"
+            )
         },
 
         {
             name: "🇲🇽 Mexico City MTC",
-            date: new Date("2026-09-24")
+            date: new Date(
+                "2026-09-24"
+            )
         },
 
         {
             name: "🌵 Monterrey Mission",
-            date: new Date("2026-10-21")
+            date: new Date(
+                "2026-10-21"
+            )
         }
 
     ];
@@ -345,36 +580,69 @@ function displayTimeline() {
 
 
 // =====================================
-// EMAIL ARCHIVE
+// EMAILS
 // =====================================
 
-function loadLetters() {
+async function loadLetters() {
 
     console.log(
-        "Loading emails..."
+        "Loading fresh emails..."
     );
 
 
-    loadJSONP(
+    try {
 
-        "letters",
-
-        function(data) {
-
-            console.log(
-                "Emails loaded:",
-                data
+        const data =
+            await loadJSONP(
+                "letters"
             );
 
 
-            letters = data;
+        if (!Array.isArray(data)) {
 
-
-            displayLetters();
+            throw new Error(
+                "Letters API did not return an array."
+            );
 
         }
 
-    );
+
+        letters = data;
+
+
+        console.log(
+            "EMAILS RECEIVED:",
+            letters.length
+        );
+
+
+        displayLetters();
+
+
+        return data;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "EMAIL ERROR:",
+            error
+        );
+
+
+        document.getElementById(
+            "latest"
+        ).innerHTML =
+            "Unable to load emails.";
+
+
+        document.getElementById(
+            "journal"
+        ).innerHTML =
+            "Unable to load emails.";
+
+    }
 
 }
 
@@ -385,46 +653,60 @@ function loadLetters() {
 
 function displayLetters() {
 
-    let html = "";
+    const latest =
+        document.getElementById(
+            "latest"
+        );
+
+
+    const journal =
+        document.getElementById(
+            "journal"
+        );
 
 
     if (
-        letters &&
-        letters.length > 0
+        !letters ||
+        letters.length === 0
     ) {
 
-        const latest =
-            letters[0];
+        latest.innerHTML =
+            "No emails found.";
 
 
-        document.getElementById(
-            "latest"
-        ).innerHTML = `
+        journal.innerHTML =
+            "No emails found.";
 
-            <h3>
-                ${latest.name}
-            </h3>
 
-            <a
-                class="button"
-                href="${latest.url}"
-                target="_blank"
-            >
-                Open Latest Email
-            </a>
-
-        `;
+        return;
 
     }
 
-    else {
 
-        document.getElementById(
-            "latest"
-        ).innerHTML =
-            "No emails found";
+    const newest =
+        letters[0];
 
-    }
+
+    latest.innerHTML = `
+
+        <h3>
+            ${escapeHTML(
+                newest.name
+            )}
+        </h3>
+
+        <a
+            class="button"
+            href="${newest.url}"
+            target="_blank"
+        >
+            Open Latest Email
+        </a>
+
+    `;
+
+
+    let html = "";
 
 
     letters.forEach(function(letter) {
@@ -434,13 +716,18 @@ function displayLetters() {
             <div class="entry">
 
                 <h3>
-                    📖 ${letter.name}
+                    📖
+                    ${escapeHTML(
+                        letter.name
+                    )}
                 </h3>
 
                 <div class="date">
-                    ${new Date(
+
+                    ${formatDate(
                         letter.date
-                    ).toLocaleDateString()}
+                    )}
+
                 </div>
 
                 <a
@@ -458,9 +745,8 @@ function displayLetters() {
     });
 
 
-    document.getElementById(
-        "journal"
-    ).innerHTML = html;
+    journal.innerHTML =
+        html;
 
 }
 
@@ -469,38 +755,88 @@ function displayLetters() {
 // PHOTOS
 // =====================================
 
-function loadPhotos() {
+async function loadPhotos() {
 
     console.log(
-        "Loading photos..."
+        "Loading fresh photos..."
     );
 
 
-    loadJSONP(
+    try {
 
-        "photos",
-
-        function(data) {
-
-            console.log(
-                "Photos loaded:",
-                data
+        const data =
+            await loadJSONP(
+                "photos"
             );
 
 
-            photos = data;
+        if (!Array.isArray(data)) {
 
-
-            displayPhotos();
+            throw new Error(
+                "Photos API did not return an array."
+            );
 
         }
 
-    );
+
+        photos = data;
+
+
+        console.log(
+            "PHOTOS RECEIVED:",
+            photos.length
+        );
+
+
+        displayPhotos();
+
+
+        return data;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "PHOTO ERROR:",
+            error
+        );
+
+
+        document.getElementById(
+            "photoGallery"
+        ).innerHTML =
+            "Unable to load photos.";
+
+    }
 
 }
 
 
+// =====================================
+// DISPLAY PHOTOS
+// =====================================
+
 function displayPhotos() {
+
+    const gallery =
+        document.getElementById(
+            "photoGallery"
+        );
+
+
+    if (
+        !photos ||
+        photos.length === 0
+    ) {
+
+        gallery.innerHTML =
+            "<p>No photos found.</p>";
+
+        return;
+
+    }
+
 
     let html = "";
 
@@ -509,33 +845,34 @@ function displayPhotos() {
 
         html += `
 
-            <img
-                src="${photo.url}"
-                loading="lazy"
+            <a
+                href="${photo.link}"
+                target="_blank"
             >
+
+                <img
+                    src="${photo.url}&v=${Date.now()}"
+                    alt="${escapeHTML(
+                        photo.name
+                    )}"
+                    loading="lazy"
+                >
+
+            </a>
 
         `;
 
     });
 
 
-    if (photos.length === 0) {
-
-        html =
-            "<p>No photos found.</p>";
-
-    }
-
-
-    document.getElementById(
-        "photoGallery"
-    ).innerHTML = html;
+    gallery.innerHTML =
+        html;
 
 }
 
 
 // =====================================
-// MAP SYSTEM
+// MAPS
 // =====================================
 
 const MAPS = {
@@ -555,9 +892,11 @@ const LOCATIONS = {
 
         map: "utah",
 
-        name: "Tremonton, Utah",
+        name:
+            "Tremonton, Utah",
 
-        description: "Home MTC",
+        description:
+            "Home MTC",
 
         x: 40,
 
@@ -570,9 +909,11 @@ const LOCATIONS = {
 
         map: "mexico",
 
-        name: "México City, México",
+        name:
+            "México City, México",
 
-        description: "CCM México City",
+        description:
+            "CCM México City",
 
         x: 58.5,
 
@@ -585,7 +926,8 @@ const LOCATIONS = {
 
         map: "mexico",
 
-        name: "Monterrey, México",
+        name:
+            "Monterrey, México",
 
         description:
             "Monterrey West México Mission",
@@ -600,56 +942,95 @@ const LOCATIONS = {
 
 
 // =====================================
-// MAP BUTTON CONTROLS
+// MAP BUTTONS
 // =====================================
 
-function setTestLocation(location) {
+async function setTestLocation(location) {
 
-    loadJSONP(
+    try {
 
-        "setLocation&location=" +
-        encodeURIComponent(location),
+        await loadJSONP(
 
-        function() {
+            "setLocation",
 
-            loadMap();
+            {
+                location: location
+            }
 
-        }
+        );
 
-    );
+
+        await loadMap();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "LOCATION ERROR:",
+            error
+        );
+
+    }
 
 }
 
 
-function showMapLocation(location) {
+// =====================================
+// SHOW MAP
+// =====================================
 
-    loadJSONP(
+async function showMapLocation(location) {
 
-        "map&id=" +
-        encodeURIComponent(
-            MAPS[location.map]
-        ),
+    try {
 
-        function(imageData) {
+        const imageData =
+            await loadJSONP(
 
-            document.getElementById(
-                "mapImage"
-            ).src = imageData;
+                "map",
 
-        }
+                {
+                    id:
+                        MAPS[
+                            location.map
+                        ]
+                }
 
-    );
+            );
+
+
+        document.getElementById(
+            "mapImage"
+        ).src =
+            imageData;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "MAP IMAGE ERROR:",
+            error
+        );
+
+    }
 
 
     const pin =
-        document.getElementById("pin");
+        document.getElementById(
+            "pin"
+        );
+
 
     const pulse =
-        document.getElementById("pulse");
+        document.getElementById(
+            "pulse"
+        );
 
 
     pin.style.left =
         location.x + "%";
+
 
     pin.style.top =
         location.y + "%";
@@ -657,6 +1038,7 @@ function showMapLocation(location) {
 
     pulse.style.left =
         location.x + "%";
+
 
     pulse.style.top =
         location.y + "%";
@@ -679,85 +1061,159 @@ function showMapLocation(location) {
 }
 
 
-function loadMap() {
+// =====================================
+// LOAD MAP
+// =====================================
 
-    loadJSONP(
+async function loadMap() {
 
-        "location",
+    try {
 
-        function(testLocation) {
-
-            if (
-                testLocation === "home"
-            ) {
-
-                showMapLocation(
-                    LOCATIONS.tremonton
-                );
-
-            }
-
-            else if (
-                testLocation === "ccm"
-            ) {
-
-                showMapLocation(
-                    LOCATIONS.mexicoCity
-                );
-
-            }
-
-            else if (
-                testLocation === "mission"
-            ) {
-
-                showMapLocation(
-                    LOCATIONS.monterrey
-                );
-
-            }
-
-            else {
-
-                const today =
-                    new Date();
+        const currentLocation =
+            await loadJSONP(
+                "location"
+            );
 
 
-                if (
-                    today <
-                    new Date("2026-09-24")
-                ) {
+        if (
+            currentLocation ===
+            "home"
+        ) {
 
-                    showMapLocation(
-                        LOCATIONS.tremonton
-                    );
+            await showMapLocation(
+                LOCATIONS.tremonton
+            );
 
-                }
-
-                else if (
-                    today <
-                    new Date("2026-10-21")
-                ) {
-
-                    showMapLocation(
-                        LOCATIONS.mexicoCity
-                    );
-
-                }
-
-                else {
-
-                    showMapLocation(
-                        LOCATIONS.monterrey
-                    );
-
-                }
-
-            }
+            return;
 
         }
 
+
+        if (
+            currentLocation ===
+            "ccm"
+        ) {
+
+            await showMapLocation(
+                LOCATIONS.mexicoCity
+            );
+
+            return;
+
+        }
+
+
+        if (
+            currentLocation ===
+            "mission"
+        ) {
+
+            await showMapLocation(
+                LOCATIONS.monterrey
+            );
+
+            return;
+
+        }
+
+
+        const today =
+            new Date();
+
+
+        if (
+            today <
+            new Date(
+                "2026-09-24"
+            )
+        ) {
+
+            await showMapLocation(
+                LOCATIONS.tremonton
+            );
+
+        }
+
+        else if (
+            today <
+            new Date(
+                "2026-10-21"
+            )
+        ) {
+
+            await showMapLocation(
+                LOCATIONS.mexicoCity
+            );
+
+        }
+
+        else {
+
+            await showMapLocation(
+                LOCATIONS.monterrey
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "MAP ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+// =====================================
+// HELPERS
+// =====================================
+
+function escapeHTML(value) {
+
+    return String(
+        value || ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
     );
+
+}
+
+
+function formatDate(value) {
+
+    const date =
+        new Date(value);
+
+
+    return date.toLocaleDateString();
 
 }
 
@@ -766,26 +1222,29 @@ function loadMap() {
 // START APP
 // =====================================
 
-window.onload = function() {
+window.addEventListener(
+    "load",
+    function() {
 
-    console.log(
-        "Starting Winkler Mission Archive..."
-    );
+        console.log(
+            "APP LOADED"
+        );
 
 
-    loadMission();
+        loadMission();
 
-    displayTimeline();
+        displayTimeline();
 
-    loadLetters();
+        loadLetters();
 
-    loadPhotos();
+        loadPhotos();
 
-};
+    }
+);
 
 
 // =====================================
-// REFRESH DATA WHEN APP RETURNS
+// REFRESH WHEN RETURNING TO APP
 // =====================================
 
 document.addEventListener(
@@ -797,6 +1256,11 @@ document.addEventListener(
             "visible"
         ) {
 
+            console.log(
+                "APP VISIBLE - REFRESHING DATA"
+            );
+
+
             loadLetters();
 
             loadPhotos();
@@ -804,24 +1268,4 @@ document.addEventListener(
         }
 
     }
-);
-
-
-// Refresh email/photo data every minute
-setInterval(
-    function() {
-
-        if (
-            document.visibilityState ===
-            "visible"
-        ) {
-
-            loadLetters();
-
-            loadPhotos();
-
-        }
-
-    },
-    60000
 );
