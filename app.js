@@ -3,95 +3,70 @@
 // APP.JS
 // =====================================
 
-const APP_VERSION = "2.0.0";
+const APP_VERSION = "1.0.3";
 
-console.log("Winkler Mission Archive:", APP_VERSION);
+console.log(
+    "Winkler Mission Archive Version:",
+    APP_VERSION
+);
 
 let letters = [];
 let photos = [];
 
 
 // =====================================
-// API CONNECTION
+// JSONP CONNECTION
 // =====================================
 
 function loadJSONP(action, callback) {
 
     const callbackName =
-        "winklerCallback_" +
+        "callback_" +
         Date.now() +
         "_" +
         Math.random()
             .toString(36)
-            .substring(2, 10);
+            .substring(2);
 
-    const script =
-        document.createElement("script");
 
-    let finished = false;
+    window[callbackName] = function(data) {
 
-    function cleanup() {
-
-        if (finished) return;
-
-        finished = true;
+        callback(data);
 
         delete window[callbackName];
 
         if (script.parentNode) {
-            script.parentNode.removeChild(script);
+            script.remove();
         }
-
-    }
-
-    window[callbackName] = function(data) {
-
-        try {
-
-            callback(data);
-
-        } catch (error) {
-
-            console.error(
-                "API callback error:",
-                error
-            );
-
-        }
-
-        cleanup();
 
     };
+
+
+    const script =
+        document.createElement("script");
+
+
+    script.src =
+        API_URL +
+        "?action=" +
+        action +
+        "&callback=" +
+        callbackName +
+        "&t=" +
+        Date.now();
 
 
     script.onerror = function() {
 
         console.error(
-            "Unable to contact Mission Archive API."
+            "Mission Archive API failed:",
+            script.src
         );
-
-        cleanup();
 
     };
 
 
-    const separator =
-        API_URL.includes("?")
-            ? "&"
-            : "?";
-
-
-    script.src =
-        API_URL +
-        separator +
-        action +
-        "&callback=" +
-        callbackName +
-        "&cacheBust=" +
-        Date.now();
-
-
-    document.head.appendChild(script);
+    document.body.appendChild(script);
 
 }
 
@@ -111,17 +86,10 @@ function showPage(page) {
     document.getElementById("mapPage").style.display = "none";
 
 
-    const target =
-        document.getElementById(page + "Page");
+    document.getElementById(
+        page + "Page"
+    ).style.display = "block";
 
-
-    if (!target) return;
-
-
-    target.style.display = "block";
-
-
-    // ALWAYS GET FRESH DATA
 
     if (page === "home") {
 
@@ -154,8 +122,11 @@ function showPage(page) {
 
 
     window.scrollTo({
+
         top: 0,
+
         behavior: "smooth"
+
     });
 
 }
@@ -176,26 +147,28 @@ function daysBetween(a, b) {
 
 
 // =====================================
-// MISSION
+// MISSION CARD
 // =====================================
 
 function loadMission() {
 
     loadJSONP(
-        "action=mission",
+
+        "mission",
+
         function(data) {
-
-            if (!data) return;
-
 
             const today =
                 new Date();
 
+
             const mtc =
                 new Date(data.mtcDate);
 
+
             const mexico =
                 new Date(data.mexicoDate);
+
 
             const mission =
                 new Date(data.missionStart);
@@ -293,6 +266,7 @@ function loadMission() {
             `;
 
         }
+
     );
 
 }
@@ -371,30 +345,26 @@ function displayTimeline() {
 
 
 // =====================================
-// EMAILS
+// EMAIL ARCHIVE
 // =====================================
 
 function loadLetters() {
 
     console.log(
-        "Loading fresh emails..."
+        "Loading emails..."
     );
 
 
     loadJSONP(
-        "action=letters",
+
+        "letters",
+
         function(data) {
 
-            if (!Array.isArray(data)) {
-
-                console.error(
-                    "Invalid email data:",
-                    data
-                );
-
-                return;
-
-            }
+            console.log(
+                "Emails loaded:",
+                data
+            );
 
 
             letters = data;
@@ -403,6 +373,7 @@ function loadLetters() {
             displayLetters();
 
         }
+
     );
 
 }
@@ -414,62 +385,47 @@ function loadLetters() {
 
 function displayLetters() {
 
-    const latestElement =
-        document.getElementById("latest");
-
-    const journalElement =
-        document.getElementById("journal");
-
-
-    if (!latestElement ||
-        !journalElement) {
-
-        return;
-
-    }
-
-
     let html = "";
 
 
-    if (letters.length === 0) {
+    if (
+        letters &&
+        letters.length > 0
+    ) {
 
-        latestElement.innerHTML =
-            "No emails found.";
+        const latest =
+            letters[0];
 
-        journalElement.innerHTML =
-            "No emails found.";
 
-        return;
+        document.getElementById(
+            "latest"
+        ).innerHTML = `
+
+            <h3>
+                ${latest.name}
+            </h3>
+
+            <a
+                class="button"
+                href="${latest.url}"
+                target="_blank"
+            >
+                Open Latest Email
+            </a>
+
+        `;
 
     }
 
+    else {
 
-    // Latest email
+        document.getElementById(
+            "latest"
+        ).innerHTML =
+            "No emails found";
 
-    const latest =
-        letters[0];
+    }
 
-
-    latestElement.innerHTML = `
-
-        <h3>
-            ${escapeHTML(latest.name)}
-        </h3>
-
-        <a
-            class="button"
-            href="${latest.url}"
-            target="_blank"
-            rel="noopener"
-        >
-            Open Latest Email
-        </a>
-
-    `;
-
-
-    // Archive
 
     letters.forEach(function(letter) {
 
@@ -478,20 +434,19 @@ function displayLetters() {
             <div class="entry">
 
                 <h3>
-                    📖 ${escapeHTML(letter.name)}
+                    📖 ${letter.name}
                 </h3>
 
                 <div class="date">
-
-                    ${formatDate(letter.date)}
-
+                    ${new Date(
+                        letter.date
+                    ).toLocaleDateString()}
                 </div>
 
                 <a
                     class="button"
                     href="${letter.url}"
                     target="_blank"
-                    rel="noopener"
                 >
                     Read Letter
                 </a>
@@ -503,8 +458,9 @@ function displayLetters() {
     });
 
 
-    journalElement.innerHTML =
-        html;
+    document.getElementById(
+        "journal"
+    ).innerHTML = html;
 
 }
 
@@ -516,24 +472,20 @@ function displayLetters() {
 function loadPhotos() {
 
     console.log(
-        "Loading fresh photos..."
+        "Loading photos..."
     );
 
 
     loadJSONP(
-        "action=photos",
+
+        "photos",
+
         function(data) {
 
-            if (!Array.isArray(data)) {
-
-                console.error(
-                    "Invalid photo data:",
-                    data
-                );
-
-                return;
-
-            }
+            console.log(
+                "Photos loaded:",
+                data
+            );
 
 
             photos = data;
@@ -542,35 +494,13 @@ function loadPhotos() {
             displayPhotos();
 
         }
+
     );
 
 }
 
 
-// =====================================
-// DISPLAY PHOTOS
-// =====================================
-
 function displayPhotos() {
-
-    const gallery =
-        document.getElementById(
-            "photoGallery"
-        );
-
-
-    if (!gallery) return;
-
-
-    if (photos.length === 0) {
-
-        gallery.innerHTML =
-            "<p>No photos found.</p>";
-
-        return;
-
-    }
-
 
     let html = "";
 
@@ -579,27 +509,27 @@ function displayPhotos() {
 
         html += `
 
-            <a
-                href="${photo.link}"
-                target="_blank"
-                rel="noopener"
+            <img
+                src="${photo.url}"
+                loading="lazy"
             >
-
-                <img
-                    src="${photo.url}&cacheBust=${Date.now()}"
-                    alt="${escapeHTML(photo.name)}"
-                    loading="lazy"
-                >
-
-            </a>
 
         `;
 
     });
 
 
-    gallery.innerHTML =
-        html;
+    if (photos.length === 0) {
+
+        html =
+            "<p>No photos found.</p>";
+
+    }
+
+
+    document.getElementById(
+        "photoGallery"
+    ).innerHTML = html;
 
 }
 
@@ -670,14 +600,14 @@ const LOCATIONS = {
 
 
 // =====================================
-// MAP CONTROLS
+// MAP BUTTON CONTROLS
 // =====================================
 
 function setTestLocation(location) {
 
     loadJSONP(
 
-        "action=setLocation&location=" +
+        "setLocation&location=" +
         encodeURIComponent(location),
 
         function() {
@@ -691,33 +621,20 @@ function setTestLocation(location) {
 }
 
 
-// =====================================
-// SHOW MAP
-// =====================================
-
 function showMapLocation(location) {
 
     loadJSONP(
 
-        "action=map&id=" +
+        "map&id=" +
         encodeURIComponent(
             MAPS[location.map]
         ),
 
         function(imageData) {
 
-            const image =
-                document.getElementById(
-                    "mapImage"
-                );
-
-
-            if (image) {
-
-                image.src =
-                    imageData;
-
-            }
+            document.getElementById(
+                "mapImage"
+            ).src = imageData;
 
         }
 
@@ -731,64 +648,48 @@ function showMapLocation(location) {
         document.getElementById("pulse");
 
 
-    if (pin) {
+    pin.style.left =
+        location.x + "%";
 
-        pin.style.left =
-            location.x + "%";
-
-        pin.style.top =
-            location.y + "%";
-
-    }
+    pin.style.top =
+        location.y + "%";
 
 
-    if (pulse) {
+    pulse.style.left =
+        location.x + "%";
 
-        pulse.style.left =
-            location.x + "%";
-
-        pulse.style.top =
-            location.y + "%";
-
-    }
+    pulse.style.top =
+        location.y + "%";
 
 
-    const info =
-        document.getElementById(
-            "mapInfo"
-        );
+    document.getElementById(
+        "mapInfo"
+    ).innerHTML = `
 
+        <b>
+            ${location.name}
+        </b>
 
-    if (info) {
+        <br>
 
-        info.innerHTML = `
+        ${location.description}
 
-            <b>
-                ${location.name}
-            </b>
-
-            <br>
-
-            ${location.description}
-
-        `;
-
-    }
+    `;
 
 }
 
 
-// =====================================
-// LOAD MAP
-// =====================================
-
 function loadMap() {
 
     loadJSONP(
-        "action=location",
+
+        "location",
+
         function(testLocation) {
 
-            if (testLocation === "home") {
+            if (
+                testLocation === "home"
+            ) {
 
                 showMapLocation(
                     LOCATIONS.tremonton
@@ -855,67 +756,22 @@ function loadMap() {
             }
 
         }
+
     );
 
 }
 
 
 // =====================================
-// HELPERS
+// START APP
 // =====================================
 
-function escapeHTML(value) {
+window.onload = function() {
 
-    if (value === null ||
-        value === undefined) {
+    console.log(
+        "Starting Winkler Mission Archive..."
+    );
 
-        return "";
-
-    }
-
-
-    return String(value)
-
-        .replace(/&/g, "&amp;")
-
-        .replace(/</g, "&lt;")
-
-        .replace(/>/g, "&gt;")
-
-        .replace(/"/g, "&quot;")
-
-        .replace(/'/g, "&#039;");
-
-}
-
-
-function formatDate(value) {
-
-    const date =
-        new Date(value);
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return "";
-
-    }
-
-
-    return date.toLocaleDateString();
-
-}
-
-
-// =====================================
-// INITIAL LOAD
-// =====================================
-
-function refreshEverything() {
 
     loadMission();
 
@@ -925,31 +781,11 @@ function refreshEverything() {
 
     loadPhotos();
 
-}
+};
 
 
 // =====================================
-// START
-// =====================================
-
-window.addEventListener(
-    "load",
-    function() {
-
-        console.log(
-            "Starting Mission Archive",
-            APP_VERSION
-        );
-
-
-        refreshEverything();
-
-    }
-);
-
-
-// =====================================
-// REFRESH WHEN APP RETURNS
+// REFRESH DATA WHEN APP RETURNS
 // =====================================
 
 document.addEventListener(
@@ -961,7 +797,9 @@ document.addEventListener(
             "visible"
         ) {
 
-            refreshEverything();
+            loadLetters();
+
+            loadPhotos();
 
         }
 
@@ -969,10 +807,7 @@ document.addEventListener(
 );
 
 
-// =====================================
-// AUTOMATIC REFRESH
-// =====================================
-
+// Refresh email/photo data every minute
 setInterval(
     function() {
 
