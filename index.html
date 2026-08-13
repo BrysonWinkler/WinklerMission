@@ -27,7 +27,7 @@ content="0"
 
 <link
 rel="manifest"
-href="manifest.json?v=3.1.0"
+href="manifest.json?v=3.1.1"
 >
 
 <meta
@@ -42,43 +42,12 @@ href="icon.png"
 
 <link
 rel="stylesheet"
-href="style.css?v=3.1.0"
+href="style.css?v=3.1.1"
 >
 
 </head>
 
-<script>
 
-if ("serviceWorker" in navigator) {
-
-    window.addEventListener("load", function() {
-
-        navigator.serviceWorker
-            .register("./service-worker.js")
-            .then(function(registration) {
-
-                console.log(
-                    "Service Worker registered:",
-                    registration.scope
-                );
-
-                registration.update();
-
-            })
-            .catch(function(error) {
-
-                console.error(
-                    "Service Worker registration failed:",
-                    error
-                );
-
-            });
-
-    });
-
-}
-
-</script>
 <body>
 
 
@@ -405,13 +374,51 @@ Loading location...
 </div>
 
 
+<!-- APP FILES -->
+
 <script
-src="config.js?v=3.1.0"
+src="config.js?v=3.1.1"
 ></script>
 
 <script
-src="app.js?v=3.1.0"
+src="app.js?v=3.1.1"
 ></script>
+
+
+<!-- SERVICE WORKER -->
+
+<script>
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", function() {
+
+        navigator.serviceWorker
+            .register("./service-worker.js")
+            .then(function(registration) {
+
+                console.log(
+                    "Winkler Mission Archive Service Worker registered:",
+                    registration.scope
+                );
+
+                registration.update();
+
+            })
+            .catch(function(error) {
+
+                console.error(
+                    "Service Worker registration failed:",
+                    error
+                );
+
+            });
+
+    });
+
+}
+
+</script>
 
 
 </body>
