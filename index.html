@@ -6,28 +6,43 @@
 <title>Winkler Mission Archive</title>
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<link
-    rel="manifest"
-    href="manifest.json?v=2.0.0"
+name="viewport"
+content="width=device-width, initial-scale=1.0"
 >
 
 <meta
-    name="theme-color"
-    content="#355834"
+http-equiv="Cache-Control"
+content="no-cache, no-store, must-revalidate"
+>
+
+<meta
+http-equiv="Pragma"
+content="no-cache"
+>
+
+<meta
+http-equiv="Expires"
+content="0"
 >
 
 <link
-    rel="icon"
-    href="icon.png?v=2.0.0"
+rel="manifest"
+href="manifest.json?v=3.1.0"
+>
+
+<meta
+name="theme-color"
+content="#355834"
 >
 
 <link
-    rel="stylesheet"
-    href="style.css?v=2.0.0"
+rel="icon"
+href="icon.png"
+>
+
+<link
+rel="stylesheet"
+href="style.css?v=3.1.0"
 >
 
 </head>
@@ -58,20 +73,48 @@ Elder Bryson Dale Winkler
 
 <div class="nav">
 
-<button onclick="showPage('home')">
+
+<button
+onclick="showPage('home')"
+>
 🏠 Home
 </button>
 
-<button onclick="showPage('letters')">
+
+<button
+onclick="showPage('letters')"
+>
 📖 Emails
 </button>
 
-<button onclick="showPage('photos')">
+
+<button
+onclick="showPage('photos')"
+>
 📸 Photos
 </button>
 
-<button onclick="showPage('map')">
+
+<button
+onclick="showPage('map')"
+>
 🗺️ Map
+</button>
+
+
+</div>
+
+
+<!-- SYNC -->
+
+<div class="sync-area">
+
+<button
+id="refreshButton"
+class="button"
+onclick="refreshArchive()"
+>
+🔄 Sync Archive
 </button>
 
 </div>
@@ -87,22 +130,31 @@ Elder Bryson Dale Winkler
 
 <div class="home-main">
 
+
 <div id="missionCard">
+
 Loading mission...
+
 </div>
+
 
 </div>
 
 
 <div class="card countdown-box">
 
+
 <h2>
 📅 Mission Timeline
 </h2>
 
+
 <div id="timeline">
+
 Loading timeline...
+
 </div>
+
 
 </div>
 
@@ -112,13 +164,18 @@ Loading timeline...
 
 <div class="card">
 
+
 <h2>
 ✉️ Latest Email
 </h2>
 
+
 <div id="latest">
+
 Loading...
+
 </div>
+
 
 </div>
 
@@ -129,21 +186,28 @@ Loading...
 <!-- LETTERS -->
 
 <div
-    id="lettersPage"
-    style="display:none;"
+id="lettersPage"
+style="display:none;"
 >
 
+
 <div class="card">
+
 
 <h2>
 📖 Email Archive
 </h2>
 
+
 <div id="journal">
+
 Loading Emails...
-</div>
 
 </div>
+
+
+</div>
+
 
 </div>
 
@@ -151,30 +215,36 @@ Loading Emails...
 <!-- PHOTOS -->
 
 <div
-    id="photosPage"
-    style="display:none;"
+id="photosPage"
+style="display:none;"
 >
 
+
 <div class="card">
+
 
 <h2>
 📸 Mexico Memories
 </h2>
 
+
 <p>
 Pictures
 </p>
 
+
 <div
-    id="photoGallery"
-    class="gallery"
+id="photoGallery"
+class="gallery"
 >
 
 Loading photos...
 
 </div>
 
+
 </div>
+
 
 </div>
 
@@ -182,17 +252,21 @@ Loading photos...
 <!-- MAP -->
 
 <div
-    id="mapPage"
-    style="display:none;"
+id="mapPage"
+style="display:none;"
 >
+
 
 <div class="card">
 
+
 <button
-    class="button"
-    onclick="showPage('home')"
+class="button"
+onclick="showPage('home')"
 >
+
 ← Back to Journal
+
 </button>
 
 
@@ -203,9 +277,11 @@ Loading photos...
 
 <div class="card">
 
+
 <h3>
 Different Maps
 </h3>
+
 
 <p>
 Click to see different maps
@@ -213,73 +289,98 @@ Click to see different maps
 
 
 <button
-    class="button"
-    onclick="setTestLocation('home')"
+class="button"
+onclick="setTestLocation('home')"
 >
+
 🏠 Home MTC
+
 </button>
 
 
 <button
-    class="button"
-    onclick="setTestLocation('ccm')"
+class="button"
+onclick="setTestLocation('ccm')"
 >
+
 🇲🇽 CCM México
+
 </button>
 
 
 <button
-    class="button"
-    onclick="setTestLocation('mission')"
+class="button"
+onclick="setTestLocation('mission')"
 >
+
 🌵 Monterrey West Mission
+
 </button>
 
 
 <button
-    class="button"
-    onclick="setTestLocation('auto')"
+class="button"
+onclick="setTestLocation('auto')"
 >
+
 📅 Where is Bryson?
+
 </button>
+
 
 </div>
 
 
 <div class="map-container">
 
-<img id="mapImage">
 
-<div
-    id="pulse"
-    class="pulse"
-></div>
-
-<div
-    id="pin"
-    class="pin"
-></div>
-
-</div>
-
-
-<div
-    id="mapInfo"
-    class="date"
+<img
+id="mapImage"
+alt="Mission map"
 >
+
+
+<div
+id="pulse"
+class="pulse"
+></div>
+
+
+<div
+id="pin"
+class="pin"
+></div>
+
+
+</div>
+
+
+<div
+id="mapInfo"
+class="date"
+>
+
 Loading location...
-</div>
 
 </div>
 
+
 </div>
 
 
-<!-- JAVASCRIPT -->
+</div>
 
-<script src="config.js?v=2.0.0"></script>
 
-<script src="app.js?v=2.0.0"></script>
+</div>
+
+
+<script
+src="config.js?v=3.1.0"
+></script>
+
+<script
+src="app.js?v=3.1.0"
+></script>
 
 
 </body>
