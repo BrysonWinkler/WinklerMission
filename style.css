@@ -98,9 +98,6 @@ opacity:.25;
 }
 
 
-
-
-
 /* =====================
 LAYOUT
 ===================== */
@@ -114,9 +111,6 @@ margin:auto;
 padding:30px 20px;
 
 }
-
-
-
 
 
 /* =====================
@@ -133,7 +127,7 @@ gap:12px;
 
 flex-wrap:wrap;
 
-margin-bottom:30px;
+margin-bottom:15px;
 
 }
 
@@ -160,7 +154,33 @@ box-shadow:
 }
 
 
+/* =====================
+SYNC BUTTON
+===================== */
 
+.sync-area{
+
+text-align:center;
+
+margin-bottom:30px;
+
+}
+
+
+#refreshButton{
+
+font-size:16px;
+
+}
+
+
+#refreshButton:disabled{
+
+opacity:.7;
+
+cursor:wait;
+
+}
 
 
 /* =====================
@@ -186,9 +206,6 @@ border:
 1px solid #d8b98b;
 
 }
-
-
-
 
 
 /* =====================
@@ -261,7 +278,6 @@ color:#c96b3b;
 }
 
 
-
 @media(max-width:900px){
 
 .home-top{
@@ -280,13 +296,9 @@ width:100%;
 }
 
 
-
-
-
 /* =====================
 MISSION CARD
 ===================== */
-
 
 .status{
 
@@ -315,9 +327,6 @@ font-weight:bold;
 color:#c96b3b;
 
 }
-
-
-
 
 
 /* =====================
@@ -349,9 +358,6 @@ font-size:15px;
 }
 
 
-
-
-
 /* =====================
 LETTERS
 ===================== */
@@ -375,9 +381,6 @@ margin-bottom:20px;
 }
 
 
-
-
-
 /* =====================
 PHOTOS
 ===================== */
@@ -394,9 +397,18 @@ gap:18px;
 }
 
 
+.gallery a{
+
+display:block;
+
+}
+
+
 .gallery img{
 
 width:100%;
+
+display:block;
 
 border-radius:18px;
 
@@ -409,15 +421,11 @@ border:
 }
 
 
-
-
-
 /* =====================
 MAP
 ===================== */
 
-
-.map-container {
+.map-container{
 
 position:relative;
 
@@ -441,7 +449,7 @@ box-shadow:
 }
 
 
-#mapImage {
+#mapImage{
 
 width:100%;
 
@@ -452,8 +460,7 @@ border-radius:10px;
 }
 
 
-
-.pin {
+.pin{
 
 position:absolute;
 
@@ -474,8 +481,7 @@ z-index:5;
 }
 
 
-
-.pin::after {
+.pin::after{
 
 content:"";
 
@@ -496,8 +502,7 @@ left:9px;
 }
 
 
-
-.pulse {
+.pulse{
 
 position:absolute;
 
@@ -518,9 +523,7 @@ animation:pulse 1.5s infinite;
 }
 
 
-
-@keyframes pulse {
-
+@keyframes pulse{
 
 0%{
 
@@ -540,6 +543,81 @@ translate(-50%,-50%)
 scale(2.5);
 
 opacity:0;
+
+}
+
+}
+
+
+/* =====================
+MOBILE
+===================== */
+
+@media(max-width:600px){
+
+.hero{
+
+padding:50px 15px;
+
+}
+
+
+.hero h1{
+
+font-size:36px;
+
+}
+
+
+.container{
+
+padding:20px 12px;
+
+}
+
+
+.card,
+.status,
+.entry{
+
+padding:22px;
+
+}
+
+
+.mission-title{
+
+font-size:26px;
+
+}
+
+
+.counter{
+
+font-size:36px;
+
+}
+
+
+.nav{
+
+gap:7px;
+
+}
+
+
+.nav button{
+
+padding:12px 15px;
+
+font-size:14px;
+
+}
+
+
+.map-container{
+
+max-width:100%;
 
 }
 
