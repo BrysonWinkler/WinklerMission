@@ -2,11 +2,8 @@
 // WINKLER MISSION ARCHIVE
 // APP.JS
 // =====================================
-// =====================================
-// APP VERSION CONTROL
-// =====================================
 
-const APP_VERSION = "1.0.2";
+const APP_VERSION = "1.0.3";
 
 console.log(
     "Winkler Mission Archive Version:",
@@ -23,28 +20,50 @@ let photos = [];
 // JSONP CONNECTION
 // =====================================
 
-function loadJSONP(action, callback){
+function loadJSONP(action, callback) {
 
-    let callbackName = "callback_" + Date.now();
+    const callbackName =
+        "callback_" +
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .substring(2, 8);
 
 
-    window[callbackName] = function(data){
+    const script =
+        document.createElement("script");
 
-        callback(data);
 
-        delete window[callbackName];
+    window[callbackName] = function(data) {
 
-        script.remove();
+        try {
+
+            callback(data);
+
+        }
+        finally {
+
+            delete window[callbackName];
+
+            if (script.parentNode) {
+                script.parentNode.removeChild(script);
+            }
+
+        }
 
     };
 
 
-    let script = document.createElement("script");
+    const separator =
+        action.includes("?")
+            ? "&"
+            : "?";
 
 
     script.src =
         API_URL +
-        "?action=" +
+        separator +
         action +
         "&callback=" +
         callbackName +
@@ -52,28 +71,65 @@ function loadJSONP(action, callback){
         Date.now();
 
 
+    script.onerror = function() {
+
+        console.error(
+            "API request failed:",
+            script.src
+        );
+
+    };
+
+
     document.body.appendChild(script);
 
 }
-
 
 
 // =====================================
 // PAGE NAVIGATION
 // =====================================
 
-function showPage(page){
+function showPage(page) {
 
-    document.getElementById("homePage").style.display="none";
-    document.getElementById("lettersPage").style.display="none";
-    document.getElementById("photosPage").style.display="none";
-    document.getElementById("mapPage").style.display="none";
+    document.getElementById("homePage").style.display = "none";
+
+    document.getElementById("lettersPage").style.display = "none";
+
+    document.getElementById("photosPage").style.display = "none";
+
+    document.getElementById("mapPage").style.display = "none";
 
 
-    document.getElementById(page+"Page").style.display="block";
+    document.getElementById(page + "Page").style.display = "block";
 
 
-    if(page==="map"){
+    // ALWAYS refresh live data when opening these pages
+
+    if (page === "home") {
+
+        loadMission();
+
+        loadLetters();
+
+    }
+
+
+    if (page === "letters") {
+
+        loadLetters();
+
+    }
+
+
+    if (page === "photos") {
+
+        loadPhotos();
+
+    }
+
+
+    if (page === "map") {
 
         loadMap();
 
@@ -82,58 +138,51 @@ function showPage(page){
 
     window.scrollTo({
 
-        top:0,
+        top: 0,
 
-        behavior:"smooth"
+        behavior: "smooth"
 
     });
 
 }
 
 
-
 // =====================================
 // DATE HELPERS
 // =====================================
 
-function daysBetween(a,b){
+function daysBetween(a, b) {
 
     return Math.ceil(
-        (b-a)/(1000*60*60*24)
+        (b - a) /
+        (1000 * 60 * 60 * 24)
     );
 
 }
-
 
 
 // =====================================
 // MISSION CARD
 // =====================================
 
-function loadMission(){
-
+function loadMission() {
 
     loadJSONP(
 
-        "mission",
+        "action=mission",
 
-        function(data){
-
+        function(data) {
 
             let today = new Date();
 
-
             let mtc =
-            new Date(data.mtcDate);
-
+                new Date(data.mtcDate);
 
             let mexico =
-            new Date(data.mexicoDate);
-
+                new Date(data.mexicoDate);
 
             let mission =
-            new Date(data.missionStart);
-
+                new Date(data.missionStart);
 
 
             let title;
@@ -141,270 +190,322 @@ function loadMission(){
             let days;
 
 
+            if (today < mtc) {
 
-            if(today < mtc){
+                title = "🏠 Home MTC";
 
-                title="🏠 Home MTC";
-                subtitle="Preparing to serve";
-                days=daysBetween(today,mtc);
+                subtitle = "Preparing to serve";
 
-            }
-
-            else if(today < mexico){
-
-                title="🇲🇽 CCM México City";
-                subtitle="Mission training";
-                days=daysBetween(today,mexico);
+                days =
+                    daysBetween(
+                        today,
+                        mtc
+                    );
 
             }
 
-            else if(today < mission){
+            else if (today < mexico) {
 
-                title="🌵 Monterrey Mission";
-                subtitle="Almost there";
-                days=daysBetween(today,mission);
+                title = "🇲🇽 CCM México City";
 
-            }
+                subtitle = "Mission training";
 
-            else{
-
-                title="🌵 Monterrey Mission";
-                subtitle="Serving in Monterrey West, México";
-                days=daysBetween(mission,today);
+                days =
+                    daysBetween(
+                        today,
+                        mexico
+                    );
 
             }
 
+            else if (today < mission) {
+
+                title = "🌵 Monterrey Mission";
+
+                subtitle = "Almost there";
+
+                days =
+                    daysBetween(
+                        today,
+                        mission
+                    );
+
+            }
+
+            else {
+
+                title = "🌵 Monterrey Mission";
+
+                subtitle =
+                    "Serving in Monterrey West, México";
+
+                days =
+                    daysBetween(
+                        mission,
+                        today
+                    );
+
+            }
 
 
-            document.getElementById("missionCard").innerHTML =
+            document.getElementById(
+                "missionCard"
+            ).innerHTML = `
 
-            `
+                <div class="status">
 
-            <div class="status">
+                    <div class="mission-title">
+                        ${title}
+                    </div>
 
-                <div class="mission-title">
+                    <p>
+                        ${subtitle}
+                    </p>
 
-                ${title}
+                    <div class="counter">
+                        ${days} Days
+                    </div>
 
                 </div>
-
-
-                <p>
-
-                ${subtitle}
-
-                </p>
-
-
-                <div class="counter">
-
-                ${days} Days
-
-                </div>
-
-
-            </div>
 
             `;
-
 
         }
 
     );
 
-
 }
-
 
 
 // =====================================
 // TIMELINE
 // =====================================
 
-function displayTimeline(){
+function displayTimeline() {
 
     let today = new Date();
 
 
-    let events=[
+    let events = [
 
         {
-            name:"🏠 Home MTC",
-            date:new Date("2026-09-09")
+            name: "🏠 Home MTC",
+            date: new Date("2026-09-09")
         },
 
         {
-            name:"🇲🇽 Mexico City MTC",
-            date:new Date("2026-09-24")
+            name: "🇲🇽 Mexico City MTC",
+            date: new Date("2026-09-24")
         },
 
         {
-            name:"🌵 Monterrey Mission",
-            date:new Date("2026-10-21")
+            name: "🌵 Monterrey Mission",
+            date: new Date("2026-10-21")
         }
 
     ];
 
 
-    let html="";
+    let html = "";
 
 
-    events.forEach(function(event){
-
+    events.forEach(function(event) {
 
         let days =
-        daysBetween(today,event.date);
+            daysBetween(
+                today,
+                event.date
+            );
 
 
-        html +=
+        html += `
 
-        `
+            <div class="countdown-item">
 
-        <div class="countdown-item">
+                ${event.name}
 
-        ${event.name}
+                <strong>
 
-        <strong>
+                    ${
+                        days > 0
+                            ? days + " Days"
+                            : "Started ✓"
+                    }
 
-        ${days > 0 ? days+" Days":"Started ✓"}
+                </strong>
 
-        </strong>
-
-        </div>
+            </div>
 
         `;
-
 
     });
 
 
-    document.getElementById("timeline").innerHTML = html;
+    document.getElementById(
+        "timeline"
+    ).innerHTML = html;
 
 }
-
 
 
 // =====================================
 // EMAIL ARCHIVE
 // =====================================
 
-function loadLetters(){
+function loadLetters() {
+
+    console.log(
+        "Refreshing emails..."
+    );
+
 
     loadJSONP(
-        "letters",
-        function(data){
 
-            console.log("Emails loaded:", data);
+        "action=letters",
 
-            letters = data;
+        function(data) {
+
+            console.log(
+                "Fresh emails loaded:",
+                data
+            );
+
+
+            letters =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
 
             displayLetters();
 
         }
+
     );
 
 }
 
 
+// =====================================
+// DISPLAY EMAILS
+// =====================================
 
-function displayLetters(){
+function displayLetters() {
 
     let html = "";
 
 
-    if(letters && letters.length > 0){
+    if (
+        letters &&
+        letters.length > 0
+    ) {
+
+        let latest =
+            letters[0];
 
 
-        let latest = letters[0];
+        document.getElementById(
+            "latest"
+        ).innerHTML = `
 
+            <h3>
+                ${latest.name}
+            </h3>
 
-        document.getElementById("latest").innerHTML =
-
-        `
-        <h3>
-        ${latest.name}
-        </h3>
-
-        <a class="button"
-        href="${latest.url}"
-        target="_blank">
-
-        Open Latest Email
-
-        </a>
-        `;
-
-
-    }
-    else{
-
-
-        document.getElementById("latest").innerHTML =
-        "No emails found";
-
-
-    }
-
-
-
-    letters.forEach(function(letter){
-
-
-        html +=
-
-        `
-        <div class="entry">
-
-
-        <h3>
-        📖 ${letter.name}
-        </h3>
-
-
-        <div class="date">
-
-        ${new Date(letter.date).toLocaleDateString()}
-
-        </div>
-
-
-        <a class="button"
-
-        href="${letter.url}"
-
-        target="_blank">
-
-        Read Letter
-
-        </a>
-
-
-        </div>
+            <a
+                class="button"
+                href="${latest.url}"
+                target="_blank"
+            >
+                Open Latest Email
+            </a>
 
         `;
 
+    }
 
-    });
+    else {
+
+        document.getElementById(
+            "latest"
+        ).innerHTML =
+            "No emails found";
+
+    }
 
 
+    letters.forEach(
+        function(letter) {
 
-    document.getElementById("journal").innerHTML = html;
+            html += `
+
+                <div class="entry">
+
+                    <h3>
+                        📖 ${letter.name}
+                    </h3>
+
+                    <div class="date">
+
+                        ${
+                            new Date(
+                                letter.date
+                            ).toLocaleDateString()
+                        }
+
+                    </div>
+
+                    <a
+                        class="button"
+                        href="${letter.url}"
+                        target="_blank"
+                    >
+                        Read Letter
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    document.getElementById(
+        "journal"
+    ).innerHTML = html;
 
 }
+
 
 // =====================================
 // PHOTOS
 // =====================================
 
-function loadPhotos(){
+function loadPhotos() {
+
+    console.log(
+        "Refreshing photos..."
+    );
+
 
     loadJSONP(
 
-        "photos",
+        "action=photos",
 
-        function(data){
+        function(data) {
 
-            photos=data;
+            console.log(
+                "Fresh photos loaded:",
+                data
+            );
+
+
+            photos =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
 
             displayPhotos();
 
@@ -415,126 +516,125 @@ function loadPhotos(){
 }
 
 
+// =====================================
+// DISPLAY PHOTOS
+// =====================================
 
-function displayPhotos(){
+function displayPhotos() {
 
-    let html="";
-
-
-    photos.forEach(function(photo){
-
-
-        html +=
-
-        `
-
-        <img src="${photo.url}">
-
-        `;
+    let html = "";
 
 
-    });
+    photos.forEach(
+        function(photo) {
+
+            html += `
+
+                <img
+                    src="${photo.url}&t=${Date.now()}"
+                    alt="${photo.name}"
+                    loading="lazy"
+                >
+
+            `;
+
+        }
+    );
 
 
-    document.getElementById("photoGallery").innerHTML = html;
+    if (photos.length === 0) {
+
+        html =
+            "<p>No photos found.</p>";
+
+    }
+
+
+    document.getElementById(
+        "photoGallery"
+    ).innerHTML = html;
 
 }
-
-
-
 
 
 // =====================================
 // MAP SYSTEM
 // =====================================
 
-
-const MAPS={
+const MAPS = {
 
     utah:
-    "1-KUPC_9u7V9t-96XTCz3Sj_H8caD0IRr",
-
+        "1-KUPC_9u7V9t-96XTCz3Sj_H8caD0IRr",
 
     mexico:
-    "1syyre3laiwnkMWDKYnorvfA9OLOOyCRQ"
+        "1syyre3laiwnkMWDKYnorvfA9OLOOyCRQ"
 
 };
 
 
+const LOCATIONS = {
 
+    tremonton: {
 
+        map: "utah",
 
-const LOCATIONS={
+        name: "Tremonton, Utah",
 
+        description: "Home MTC",
 
-    tremonton:{
+        x: 40,
 
-
-        map:"utah",
-
-        name:"Tremonton, Utah",
-
-        description:"Home MTC",
-
-        x:40,
-
-        y:16.5
-
+        y: 16.5
 
     },
 
 
-    mexicoCity:{
+    mexicoCity: {
 
+        map: "mexico",
 
-        map:"mexico",
+        name: "México City, México",
 
-        name:"México City, México",
+        description:
+            "CCM México City",
 
-        description:"CCM México City",
+        x: 58.5,
 
-        x:58.5,
-
-        y:69.5
-
+        y: 69.5
 
     },
 
 
-    monterrey:{
+    monterrey: {
 
+        map: "mexico",
 
-        map:"mexico",
+        name: "Monterrey, México",
 
-        name:"Monterrey, México",
+        description:
+            "Monterrey West México Mission",
 
-        description:"Monterrey West México Mission",
+        x: 56,
 
-        x:56,
-
-        y:40.5
-
+        y: 40.5
 
     }
 
-
 };
-
-
 
 
 // =====================================
 // MAP BUTTON CONTROLS
 // =====================================
 
-function setTestLocation(location){
-
+function setTestLocation(location) {
 
     loadJSONP(
 
-        "setLocation&location=" + location,
+        "action=setLocation&location=" +
+        encodeURIComponent(location),
 
-        function(){
+        function() {
 
             loadMap();
 
@@ -542,231 +642,190 @@ function setTestLocation(location){
 
     );
 
-
 }
 
 
+// =====================================
+// SHOW MAP LOCATION
+// =====================================
 
-
-function showMapLocation(location){
-
+function showMapLocation(location) {
 
     loadJSONP(
 
-        "map&id=" + MAPS[location.map],
+        "action=map&id=" +
+        encodeURIComponent(
+            MAPS[location.map]
+        ),
 
-        function(imageData){
+        function(imageData) {
 
-
-            document.getElementById("mapImage").src=imageData;
-
+            document.getElementById(
+                "mapImage"
+            ).src = imageData;
 
         }
 
     );
-
 
 
     let pin =
-    document.getElementById("pin");
-
+        document.getElementById("pin");
 
     let pulse =
-    document.getElementById("pulse");
-
+        document.getElementById("pulse");
 
 
     pin.style.left =
-    location.x+"%";
-
+        location.x + "%";
 
     pin.style.top =
-    location.y+"%";
-
+        location.y + "%";
 
 
     pulse.style.left =
-    location.x+"%";
-
+        location.x + "%";
 
     pulse.style.top =
-    location.y+"%";
+        location.y + "%";
 
 
+    document.getElementById(
+        "mapInfo"
+    ).innerHTML = `
 
-    document.getElementById("mapInfo").innerHTML =
+        <b>
+            ${location.name}
+        </b>
 
+        <br>
 
-    `
-
-    <b>
-
-    ${location.name}
-
-    </b>
-
-
-    <br>
-
-
-    ${location.description}
+        ${location.description}
 
     `;
-
 
 }
 
 
+// =====================================
+// LOAD MAP
+// =====================================
 
-
-
-function loadMap(){
-
+function loadMap() {
 
     loadJSONP(
 
-        "location",
+        "action=location",
 
-        function(testLocation){
+        function(testLocation) {
 
-
-
-            if(testLocation==="home"){
-
+            if (
+                testLocation === "home"
+            ) {
 
                 showMapLocation(
-
                     LOCATIONS.tremonton
-
                 );
-
 
             }
 
-
-
-            else if(testLocation==="ccm"){
-
+            else if (
+                testLocation === "ccm"
+            ) {
 
                 showMapLocation(
-
                     LOCATIONS.mexicoCity
-
                 );
-
 
             }
 
-
-
-            else if(testLocation==="mission"){
-
+            else if (
+                testLocation === "mission"
+            ) {
 
                 showMapLocation(
-
                     LOCATIONS.monterrey
-
                 );
 
-
             }
 
+            else if (
+                testLocation === "auto"
+            ) {
+
+                let today =
+                    new Date();
 
 
-            else if(testLocation==="auto"){
-
-
-                let today = new Date();
-
-
-
-                if(today < new Date("2026-09-24")){
-
+                if (
+                    today <
+                    new Date(
+                        "2026-09-24"
+                    )
+                ) {
 
                     showMapLocation(
-
                         LOCATIONS.tremonton
-
                     );
-
 
                 }
 
-
-
-                else if(today < new Date("2026-10-21")){
-
+                else if (
+                    today <
+                    new Date(
+                        "2026-10-21"
+                    )
+                ) {
 
                     showMapLocation(
-
                         LOCATIONS.mexicoCity
-
                     );
-
 
                 }
 
-
-
-                else{
-
+                else {
 
                     showMapLocation(
-
                         LOCATIONS.monterrey
-
                     );
 
-
                 }
-
 
             }
 
-
-
-            else{
-
+            else {
 
                 showMapLocation(
-
                     LOCATIONS.tremonton
-
                 );
 
-
             }
-
-
 
         }
 
     );
 
-
 }
-
-
-
 
 
 // =====================================
 // START APP
 // =====================================
 
-window.onload=function(){
+window.onload = function() {
+
+    console.log(
+        "Starting app version:",
+        APP_VERSION
+    );
 
 
     loadMission();
 
-
     displayTimeline();
-
 
     loadLetters();
 
-
     loadPhotos();
-
 
 };
